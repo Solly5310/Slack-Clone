@@ -1,9 +1,25 @@
 {
   "users": {
+    "13788": {
+      "email": "solomon.rachamim@gmail.com",
+      "name": "solly",
+      "password": "Rachamim5310!",
+      "bio": null,
+      "image": null,
+      "sessionActive": true
+    },
     "15272": {
       "email": "mia@email.com",
       "name": "Mia",
       "password": "solongbouldercity",
+      "bio": null,
+      "image": null,
+      "sessionActive": true
+    },
+    "20455": {
+      "email": "solly@hotmail.com",
+      "name": "Solman",
+      "password": "Rachamim5310!",
       "bio": null,
       "image": null,
       "sessionActive": true
@@ -15,18 +31,104 @@
       "bio": null,
       "image": null,
       "sessionActive": true
+    },
+    "60746": {
+      "email": "sol@hotmail.com",
+      "name": "sol",
+      "password": "sol",
+      "bio": null,
+      "image": null,
+      "sessionActive": true
     }
   },
   "channels": {
-    "813580": {
-      "name": "public channel",
-      "creator": 15272,
+    "350300": {
+      "name": "trsdty",
+      "creator": 13788,
       "private": false,
       "description": "",
+      "createdAt": "2022-10-12T07:40:11.790Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "376620": {
+      "name": "wer",
+      "creator": 13788,
+      "private": true,
+      "description": "",
+      "createdAt": "2022-10-12T07:34:45.616Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "395578": {
+      "name": "not wortyh",
+      "creator": 13788,
+      "private": true,
+      "description": "",
+      "createdAt": "2022-10-12T07:47:10.579Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "413241": {
+      "name": "zxc",
+      "creator": 13788,
+      "private": false,
+      "description": "",
+      "createdAt": "2022-10-12T07:45:34.949Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "559764": {
+      "name": "asd",
+      "creator": 13788,
+      "private": false,
+      "description": "",
+      "createdAt": "2022-10-12T07:36:52.074Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "653380": {
+      "name": "test",
+      "creator": 13788,
+      "private": false,
+      "description": "",
+      "createdAt": "2022-10-12T07:44:22.557Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "787530": {
+      "name": "test",
+      "creator": 13788,
+      "private": true,
+      "description": "",
+      "createdAt": "2022-10-12T07:47:00.911Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "813580": {
+      "name": "and now its this",
+      "creator": 15272,
+      "private": false,
+      "description": "2219",
       "createdAt": "2021-09-13T08:00:03.220Z",
       "members": [
         15272,
-        56422
+        56422,
+        13788
       ],
       "messages": [
         {
@@ -450,6 +552,17 @@
           "reacts": []
         }
       ]
+    },
+    "989134": {
+      "name": "Inez's public rumour forum",
+      "creator": 13788,
+      "private": true,
+      "description": "you heard the rumours from Inez, you can't believe a word she says",
+      "createdAt": "2022-10-10T08:01:28.128Z",
+      "members": [
+        13788
+      ],
+      "messages": []
     }
   },
   "nextMessageId": 43

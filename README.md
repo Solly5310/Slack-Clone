@@ -66,6 +66,9 @@ Milestone 2 focuses on creating **channels**, and viewing the basic channel scre
  * The user should also be able to see a list of all private channels they have joined. This will be visible on every screen for a logged-in user.
  * The two types of channels should be distinguishable visually.
  * Selecting a channel should take the user to the single channel screen. This single channel screen should show the channel's messages and other features (implemented in `2.3`).
+
+
+ STILL TO DOOOOOOO
  * If a user has logged in, but has not selected a channel yet, there are no rules around what the main body of the screen should display (reminder: the list of channels should still be visible somewhere, in some form).
 
 #### 2.2.2 Creating a new channel

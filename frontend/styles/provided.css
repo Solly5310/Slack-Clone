@@ -7,3 +7,99 @@ html, body {
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+main {
+    height:100%
+}
+#register {
+    display:none
+}
+
+#popUp{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.5);
+    z-index:1000;
+}
+
+#popUpContent{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background-color:#fff;
+    padding:20px;
+    border-radius:5px;
+    width:500px;
+    height:500px;
+}
+
+#mainPage {
+    display: none;
+    width:100%;
+    height: 100%;
+}
+
+#side {
+    width: 20%;
+    height: 100%;
+}
+
+
+#sideBar {
+    width:20%;
+    height:100%
+}
+
+#copyright {
+    width:100%;
+    height:5%;
+}
+
+#banner {
+    height: 5%;
+    width: 20px
+}
+
+#templateChannel {
+    display:none
+}
+
+.list-group-item:hover {
+    background-color: aqua;
+    cursor: pointer;
+}
+
+#messageTemplate {
+    display:none
+}
+
+#table 
+{
+    display:flex; 
+}
+
+#messagesTable {
+    overflow-y: scroll; 
+}
+
+#createChannelFormTemplate {
+    display: none;
+}
+
+#headerRow {
+    position: absolute;
+}
+
+#editChannelButtonTemplate {
+    display: none;
+    padding: 0px
+}
+
+#updateChannelFormTemplate {
+    display: none;
+}
