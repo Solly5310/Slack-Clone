@@ -42,6 +42,7 @@ main {
     display: none;
     width:100%;
     height: 100%;
+    flex-direction: inherit;
 }
 
 #side {
@@ -52,11 +53,12 @@ main {
 
 #sideBar {
     width:20%;
-    height:100%
+    height:100%;
+    padding: 0;
 }
 
 #copyright {
-    width:100%;
+    width:70px;
     height:5%;
 }
 
@@ -78,14 +80,12 @@ main {
     display:none
 }
 
-#table 
-{
-    display:flex; 
-}
+
 
 #messagesTable {
     overflow-y: scroll; 
 }
+
 
 #createChannelFormTemplate {
     display: none;
@@ -110,4 +110,37 @@ main {
 
 #joinChannelButtonTemplate {
     display: none;
+}
+
+.dateRow{
+    width:20%
+}
+
+#container {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+#messageInput {
+    display:flex;
+    height: 5%;
+    width: 100%;
+}
+
+#table 
+{
+    display:flex;
+    height: 95%;
+    padding:0px;
+    margin:0
+}
+
+#message {
+    height:100%;
+    width:93%;
+}
+#send {
+    width: 7%;
 }

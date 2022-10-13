@@ -90,17 +90,26 @@ Milestone 3 focuses on the display and interaction of messages on a single chann
 
 #### 2.3.1 Viewing channel messages
  * The channel's messages can be viewed on each single channel screen.
- * Each message should display the sender's name and profile photo, and message timestamp (as a time/date not as an ISO string, flexible to whatever you think is user-friendly).
+ * Each message should display the sender's name and profile photo, and message timestamp (as a time/date not as an ISO string, flexible to whatever you think is user-friendly). -- profile photo?
  * If the user has no profile photo, the frontend should use a default image.
+
+-- need to consider profile photos
+-- also need to set default behaviour
+
  
 #### 2.3.2 Message pagination
  * Users can page between sets of messages in the channel.
  * Note: you can ignore this if you properly implement infinite scroll in milestone 6.
 
+ -- will look at this at a later time
+
 #### 2.3.3 Sending messages
  * Users can send new messages from the single channel screen.
  * Once messages are sent, the channel messages should automatically update without requiring a page reload/refresh.
  * The frontend should validate the message so that empty strings or messages containing only whitespace cannot be sent.
+
+done
+
 
 #### 2.3.4 Deleting messages
  * Users can delete their own messages they see displayed from the single channel screen.
@@ -243,7 +252,7 @@ Please note: If you manually update database.json you will need to restart your 
 ### 4.1. Javascript
 
  * You must implement this assignment in ES6-compliant Vanilla JavaScript. You cannot use ReactJS, JQuery, or other abstract frameworks. You can not, for example, use a popular Javascript framework such as <a href="https://angular.io/">Angular</a> or <a href="https://reactjs.org/">React</a>.
- * You may **NOT** directly use external JavaScript. Do not use NPM except to install any other development libraries without prior approval from course authority.
+ * You may **NOT** directly use external JavaScript. Do not use   except to install any other development libraries without prior approval from course authority.
 
 ### 4.2. CSS and other libraries
 

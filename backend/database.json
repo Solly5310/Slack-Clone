@@ -42,6 +42,35 @@
     }
   },
   "channels": {
+    "112781": {
+      "name": "test",
+      "creator": 13788,
+      "private": false,
+      "description": "123",
+      "createdAt": "2022-10-13T06:54:17.689Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "191823": {
+      "name": "test",
+      "creator": 13788,
+      "private": true,
+      "description": "123",
+      "createdAt": "2022-10-13T06:47:14.142Z",
+      "members": [],
+      "messages": []
+    },
+    "204362": {
+      "name": "test",
+      "creator": 13788,
+      "private": true,
+      "description": "123",
+      "createdAt": "2022-10-13T06:53:46.713Z",
+      "members": [],
+      "messages": []
+    },
     "350300": {
       "name": "trsdty",
       "creator": 13788,
@@ -59,9 +88,7 @@
       "private": true,
       "description": "",
       "createdAt": "2022-10-12T07:34:45.616Z",
-      "members": [
-        13788
-      ],
+      "members": [],
       "messages": []
     },
     "395578": {
@@ -84,12 +111,32 @@
       ],
       "messages": []
     },
+    "470816": {
+      "name": "its a me mario",
+      "creator": 13788,
+      "private": true,
+      "description": "yup yup yup",
+      "createdAt": "2022-10-13T06:54:26.388Z",
+      "members": [],
+      "messages": []
+    },
     "559764": {
-      "name": "asd",
+      "name": "this is edited",
       "creator": 13788,
       "private": false,
-      "description": "",
+      "description": "yep yep",
       "createdAt": "2022-10-12T07:36:52.074Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
+    "602800": {
+      "name": "test",
+      "creator": 13788,
+      "private": true,
+      "description": "hello",
+      "createdAt": "2022-10-13T06:26:19.089Z",
       "members": [
         13788
       ],
@@ -127,6 +174,36 @@
         13788
       ],
       "messages": [
+        {
+          "id": 45,
+          "message": "test",
+          "sender": 13788,
+          "sentAt": "2022-10-13T22:21:08.591Z",
+          "edited": false,
+          "editedAt": null,
+          "pinned": false,
+          "reacts": []
+        },
+        {
+          "id": 44,
+          "message": "test",
+          "sender": 13788,
+          "sentAt": "2022-10-13T22:21:06.913Z",
+          "edited": false,
+          "editedAt": null,
+          "pinned": false,
+          "reacts": []
+        },
+        {
+          "id": 43,
+          "message": "test",
+          "sender": 13788,
+          "sentAt": "2022-10-13T22:21:03.054Z",
+          "edited": false,
+          "editedAt": null,
+          "pinned": false,
+          "reacts": []
+        },
         {
           "id": 42,
           "message": "yeah, i do! i just didn't think that you did",
@@ -549,6 +626,17 @@
         }
       ]
     },
+    "855880": {
+      "name": "5es5",
+      "creator": 13788,
+      "private": false,
+      "description": "N/A",
+      "createdAt": "2022-10-13T07:00:07.954Z",
+      "members": [
+        13788
+      ],
+      "messages": []
+    },
     "989134": {
       "name": "Inez's public rumour forum",
       "creator": 13788,
@@ -559,5 +647,5 @@
       "messages": []
     }
   },
-  "nextMessageId": 43
+  "nextMessageId": 46
 }

@@ -1,11 +1,13 @@
-import { BACKEND_PORT } from './config.js';
+
 // A helper you may want to use when uploading new images to the server.
 import { fileToDataUrl } from './helpers.js';
-const BASEURL = `http://localhost:${BACKEND_PORT}`
+import {get, post, put} from './services.js'
+import {popUpSetUp} from './utils.js'
+import {createChannel, updateChannel, openChannel, joinChannel, removeMemberFromChannel} from './channel.js'
+console.log(get)
+
 let TOKEN;
 let USERID;
-let CHANNELSELECTED;
-
 
 const form = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
@@ -15,314 +17,18 @@ const register = document.getElementById('register')
 const popUp = document.getElementById('popUp');
 const createChannelButton = document.getElementById('createChannel');
 
-const createChannel = (event) => {
-    event.preventDefault();
-    popUp.style.display = "block";
-    const popUpTitle = document.getElementById('popUpTitle')
-    popUpTitle.textContent = ''
-    popUpTitle.insertAdjacentText('afterbegin', "Create Channel")
-
-    const popUpBodyContent = document.getElementById('popUpBodyContent');
-    popUpBodyContent.textContent = ''
-    
-    const channelFormTemplate = document.getElementById('createChannelFormTemplate');
-    const channelForm = channelFormTemplate.cloneNode(true);
-    channelForm.removeAttribute('id')
-    popUpBodyContent.appendChild(channelForm);
-    channelForm.addEventListener('submit', (event) => {
-        event.preventDefault()
-        const channelName = event.target[0].value
-        const channelDescription = event.target[1].value
-        const channelState = event.target[2].checked
-
-
-        const payload = JSON.stringify({
-            name: channelName,
-            private: channelState,
-            description: channelDescription || "N/A"
-        })
-       
-        const response = post('/channel', payload, TOKEN)
-        response
-            .then((result) => {
-                popUp.style.display = "none";
-                setUpMainPage(true)
-            })
-    
-    })
-
-}
-
-const removeMemberFromChannel = (event) => {
-    console.log(event)
-    post(`/channel/${CHANNELSELECTED}/leave`, JSON.stringify({}), TOKEN)
-        .then((result) => console.log(result))
-        .then((result) => {
-            const table = document.getElementById('messagesTable');
-            table.textContent='';
-            const channelHead = document.getElementById('channelHead');
-            channelHead.textContent = '';
-            setUpMainPage(true)})
-
-}
-
 createChannelButton.addEventListener('click', createChannel)
 
 const placeAlert = (infoToPlace) => {
-    popUp.style.display = "block";
-    const popUpBody = document.getElementById('popUpBody');
+    const [popUpTitle, popUpBody] = popUpSetUp();
     popUpBody.insertAdjacentText('afterbegin', infoToPlace);
 }
 
 const closePopUp = document.getElementById('closePopUp');
 closePopUp.addEventListener('click', () => {
     popUp.style.display = "none";
-    const popUpBody = document.getElementById('popUpBody');
-    popUpBody.textContent = "";
 })
 
-//const editChannelButton = document.getElementById('editChannelButton');
-const joinChannel = (event) => {
-    event.preventDefault();
-
-    const channelID = event.target.id;
-    CHANNELSELECTED = channelID
-    console.log(channelID)
-    const popUpBody = document.getElementById('popUpBody');
-    popUp.style.display = "block";
-    popUpBody.textContent = "";
-    const joinChannelButtonTemplate = document.getElementById('joinChannelButtonTemplate');
-    const joinChannelButton = joinChannelButtonTemplate.cloneNode(true);
-    joinChannelButton.removeAttribute('id');
-    joinChannelButton.setAttribute('id', 'joinChannelButton')
-    popUpBody.appendChild(joinChannelButton);
-    joinChannelButton.addEventListener('click', (event) => {
-        console.log("clicked")
-        post(`/channel/${channelID}/join`, JSON.stringify({}), TOKEN)
-        .then((result) => {
-            popUp.style.display = "none";
-            setUpMainPage(true)
-            openChannel('updateChannel')
-        })
-    })
-
-    
-
-}
-
-const updateChannel = (event) => {
-    popUp.style.display = "block";
-    const popUpTitle = document.getElementById('popUpTitle')
-    popUpTitle.textContent = ''
-    popUpTitle.insertAdjacentText('afterbegin', "Edit Channel")
-
-    const popUpBodyContent = document.getElementById('popUpBodyContent');
-    popUpBodyContent.textContent = ''
-    
-    const channelFormTemplate = document.getElementById('updateChannelFormTemplate');
-    const channelForm = channelFormTemplate.cloneNode(true);
-    channelForm.removeAttribute('id')
-    popUpBodyContent.appendChild(channelForm);
-    channelForm.addEventListener('submit', (event) => {
-        event.preventDefault()
-        console.log(CHANNELSELECTED)
-        const channelName = event.target[0].value
-        const channelDescription = event.target[1].value
-        const payload = JSON.stringify({
-            name: channelName,
-            description: channelDescription || "No Description"
-        })
-        put(`/channel/${CHANNELSELECTED}`, payload, TOKEN)
-            .then((result) => {
-                popUp.style.display = "none";
-                openChannel("updateChannel");
-            }
-            )
-    })
-}
-
-
-
-const get = (url, token) => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json")
-    myHeaders.append("Authorization", `Bearer ${token}`);
-
-    var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
-      };
-
-      return new Promise ((resolve, reject) => {
-        fetch(`${BASEURL}${url}`, requestOptions)
-        .then(response => resolve(response.json())) 
-    })
-}
-
-const post = (url, payload, TOKEN) => {
-    var myHeaders = new Headers();
-
-
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", `Bearer ${TOKEN}`);
-
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: payload,
-  redirect: 'follow'
-};
-
-return new Promise ((resolve, reject) => {
-
-    fetch(`${BASEURL}${url}`, requestOptions)
-  .then((response) => {
-
-    if (response.status == 400 ) {
-
-        reject(response);
-    }
-    return response.text()})
-  .then(result => resolve(result))
-  .catch(error =>  reject(console.log(error)))}
-  );
-}
-
-const put = (url, payload, TOKEN) => {
-    var myHeaders = new Headers();
-
-
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", `Bearer ${TOKEN}`);
-
-var requestOptions = {
-  method: 'PUT',
-  headers: myHeaders,
-  body: payload,
-  redirect: 'follow'
-};
-
-return new Promise ((resolve, reject) => {
-
-    fetch(`${BASEURL}${url}`, requestOptions)
-  .then((response) => {
-
-    if (response.status == 400 ) {
-
-        reject(response);
-    }
-    return response.text()})
-  .then(result => resolve(result))
-  .catch(error =>  reject(console.log(error)))}
-  );
-}
-
-
-
-const openChannel = (event) => {
-    let channelId
-    if (event != "updateChannel") {
-        channelId = event.target.id
-    }
-    else {
-        channelId = CHANNELSELECTED
-    }
-    CHANNELSELECTED = channelId;
-    const channelMessages = get(`/message/${channelId}?start=0`, TOKEN)
-    channelMessages
-        .then((result) => {
-            console.log(result)
-            const table = document.getElementById('messagesTable');
-            table.textContent='';
-            const channelHead = document.getElementById('channelHead');
-            channelHead.textContent = '';
-            const messages = result.messages
-
-            get(`/channel/${channelId}`, TOKEN)
-                .then((result) => {
-                    console.log(result)
-
- 
-                    const headerRow = document.createElement('tr');
-                    headerRow.setAttribute('id', 'headerRow')
-                    
-                    
-                    // here we need to consider if the user is part of the channel
-                    //so this is when he is
-
-                    if (result.members.includes(USERID)) {
-                    const description = document.createElement('td');
-                    const channelName = document.createElement('td');
-                    const state = document.createElement('td');
-                    const creationDate = document.createElement('td');
-                    const creator = document.createElement('td');
-
-                    channelHead.appendChild(headerRow);
-
-                    channelName.insertAdjacentText('afterbegin', result.name);
-                    state.insertAdjacentText('afterbegin', result.private? "Private" : "Public");
-                    creationDate.insertAdjacentText('afterbegin', result.createdAt);
-                    creator.insertAdjacentText('afterbegin', result.creator);
-                    description.insertAdjacentText('afterbegin', result.description);
-
-                    headerRow.appendChild(channelName);
-                    headerRow.appendChild(state);
-                    headerRow.appendChild(creationDate);
-                    headerRow.appendChild(creator);
-                    headerRow.appendChild(description);
-
-
-                    const editChannel = document.createElement('td');
-                    const editChannelButtonTemplate  = document.getElementById('editChannelButtonTemplate');
-                    const editChannelButton = editChannelButtonTemplate.cloneNode(true);
-                    headerRow.appendChild(editChannel);
-                    editChannelButton.style.display = "block";
-                    editChannelButton.addEventListener('click', updateChannel )
-         
-                    editChannelButton.removeAttribute('id');
-                    editChannelButton.setAttribute('id','editChannelButton')
-                    editChannel.appendChild(editChannelButton);
-                    
-                    const leaveChannel = document.createElement('td');
-                    headerRow.appendChild(leaveChannel);
-                    const leaveChannelButtonTemplate = document.getElementById('leaveChannelButtonTemplate');
-                    const leaveChannelButton = leaveChannelButtonTemplate.cloneNode(true);
-                    leaveChannelButton.style.display = "block";
-                    leaveChannelButton.removeAttribute('id');
-                    leaveChannelButton.setAttribute('id', 'leaveChannelButton')
-                    leaveChannel.appendChild(leaveChannelButton);
-                    leaveChannelButton.addEventListener('click', removeMemberFromChannel)
-                    }
-
-                    for (let x of messages)
-                    {
-                        let tr1 =  document.createElement('tr');
-                        let td1 = document.createElement('td');
-                        tr1.appendChild(td1);
-
-                        tr1.setAttribute('id', x.sender)
-                        td1.setAttribute('colspan', 2)
-                        td1.insertAdjacentText('afterbegin', x.sender);
-
-                        let tr2 =  document.createElement('tr');
-                        let tdDate = document.createElement('td');
-                        tdDate.insertAdjacentText('afterbegin', x.sentAt);
-                        tr2.appendChild(tdDate);
-
-                        let tdMessage = document.createElement('td');
-                        tdMessage.insertAdjacentText('afterbegin', x.message);
-                        tr2.appendChild(tdMessage);
-                        tr2.setAttribute('id', x.id)
-
-                    
-                        table.appendChild(tr1);
-                        table.appendChild(tr2);
-                    }
-                    table.style.display ="block"
-            })
-        })
-}
 
 
 const setUpMainPage = (result) => {
@@ -443,4 +149,7 @@ registerForm.addEventListener('submit', (event) => {
         .catch((error) =>  placeAlert(error.error));
 
 })
+
+
+export {TOKEN, USERID, setUpMainPage}
 

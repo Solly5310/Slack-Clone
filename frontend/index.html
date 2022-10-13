@@ -33,7 +33,6 @@
 
         </div>
         <div id="popUpBody">
-          <div id="popUpBodyContent"></div>
         </div>
       </div>
     </div>
@@ -48,13 +47,18 @@
             <button class="btn btn-primary" id="createChannel">Create Channel</button>
           </div>
         </nav>
-        <nav></nav>
-        <table id="table" class="table table-sm table-dark">
-          <thead id = channelHead></thead>
-          <tbody id="messagesTable">
+        <div id = 'container'>
+          <table id="table" class="table table-sm table-dark">
+            <thead id = channelHead></thead>
+            <tbody id="messagesTable">
 
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+          <form id = "messageInput">
+            <input required type="text" id="message" placeholder="Enter message here">
+            <button type="submit" class="btn btn-primary" id="send">Send</button>
+          </form>
+      </div>
     </div>
 
     <div id="login">
