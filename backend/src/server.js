@@ -197,7 +197,9 @@ app.delete('/message/:channelId/:messageId', catchErrors(authed(async (req, res,
 app.post('/message/pin/:channelId/:messageId', catchErrors(authed(async (req, res, authUserId) => {
   const { channelId, messageId, } = req.params;
   await assertValidChannel(channelId);
+  console.log("We get here")
   await pinMessage(authUserId, channelId, messageId);
+  console.log("werwe")
   return res.status(200).send({});
 })));
 

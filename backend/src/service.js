@@ -344,10 +344,13 @@ export const editMessage = (authUserId, channelId, messageId, newMessage, newIma
 
 export const pinMessage = (authUserId, channelId, messageId) => channelLock((resolve, reject) => {
   assertChannelMember(authUserId, channelId);
+  console.log(channelId, messageId)
   const messageIndex = findMsgIdxInChannel(channelId, messageId);
+  console.log(messageIndex)
   if (channels[channelId].messages[messageIndex].pinned) {
     return reject(new InputError('This message is already pinned'));
   }
+  console.log(channels[channelId].messages[messageIndex].pinned)
   channels[channelId].messages[messageIndex].pinned = true;
   resolve();
 });

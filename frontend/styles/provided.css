@@ -55,6 +55,7 @@ main {
     width:20%;
     height:100%;
     padding: 0;
+    max-width: 332px;
 }
 
 #copyright {
@@ -112,6 +113,10 @@ main {
     display: none;
 }
 
+#editMessageButtonTemplate {
+    display: none;
+}
+
 .dateRow{
     width:20%
 }
@@ -132,7 +137,7 @@ main {
 #table 
 {
     display:flex;
-    height: 95%;
+    height: 90%;
     padding:0px;
     margin:0
 }
@@ -143,4 +148,58 @@ main {
 }
 #send {
     width: 7%;
+}
+
+#editMessageFormTemplate {
+    display:none
+}
+
+.pinButton {
+    margin-left: 5px;
+}
+
+.userName:hover {
+    cursor: pointer;
+    color: lightblue
+}
+
+#userProfileTemplate {
+    display: none;
+
+}
+
+.userProfile {
+    list-style: none;
+}
+
+#profileBar {
+    display:flex;
+    height: 5%;
+    width: 100%;
+    flex-direction: row-reverse;
+    padding: 0;
+
+}
+
+#profileImage {
+    width: 5%;
+    height: 100%;
+    display: flex;
+}
+
+#profileImage:hover {
+    cursor: pointer;
+}
+
+.login-input {
+    width:25%;
+    margin: 5px 37.5%
+}
+
+#login-form {
+    text-align: center;
+}
+
+#editProfileTemplate {
+    display: none;
 }

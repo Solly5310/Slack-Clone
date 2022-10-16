@@ -118,16 +118,18 @@ done
 #### 2.3.5 Editing messages
  * Users can edit their own messages they see displayed from the single channel screen.
  * Once messages are edited, there should be an indication that they have been edited, as well as the timestamp (as a time/date not as an ISO string, flexible to whatever you think is user-friendly).
- * The frontend should validate the message so that a user cannot edit a message to the same existing message.
+ * The frontend should validate the message so that a user cannot edit a message to the same existing message. - not sure about this one
 
 #### 2.3.6 Reacting to messages
  * Users can react and unreact to messages.
  * You should provide at least 3 different reactions.
  * Reactions must be UTF-8 emojis.
 
+ - lets look at this one tomorrow ?
+
 #### 2.3.7 Pinning messages
  * Users can pin and unpin messages.
- * There should be a way for users to view all the channel's pinned messages at once. If the user is only on the first page of messages, but there is a pinned message on the third page, they should not have to navigate to the third page to see it.
+ * There should be a way for users to view all the channel's pinned messages at once. If the user is only on the first page of messages, but there is a pinned message on the third page, they should not have to navigate to the third page to see it. lets do this one?
 
 ### 2.4. Milestone 4 - Multi-user interactivity (10%)
 
@@ -142,12 +144,18 @@ Milestone 4 focuses on the interactions that come from having multiple users in 
  * Within a single channel screen, if you click on a users' name on a given message, it should display their profile screen.
  * Their profile photo, name, bio, and email should be displayed on this screen.
 
+- done
+
 #### 2.4.3 Viewing and editing user's own profile
  * On all logged in screens, there must be a way for the user to view their own profile screen.
  * On a user's own profile screen, they should also be able to see the field that allows them to enter a new password (they cannot see their current).
+
+- we can quickly make this so that it is the users own profile
+ 
  * On a user's own profile screen, they should be able to toggle between viewing the new password they're entering in either plain text or hidden as a string of asterisks/dots of the correct length. It is hidden by default.
  * On a user's own profile screen, they can update their own profile, including name, bio, email, and password (as described above).
  * On a user's own profile screen, they should be able to upload and change their profile photo.
+
 
 ### 2.5. Milestone 5 - Photos in channels (7%)
 

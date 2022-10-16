@@ -3,7 +3,7 @@
 import { fileToDataUrl } from './helpers.js';
 import {get, post, put} from './services.js'
 import {popUpSetUp} from './utils.js'
-import {createChannel, updateChannel, openChannel, joinChannel, removeMemberFromChannel} from './channel.js'
+import {createChannel, updateChannel, openChannel, joinChannel, removeMemberFromChannel, renderProfile} from './channel.js'
 console.log(get)
 
 let TOKEN;
@@ -52,7 +52,7 @@ const setUpMainPage = (result) => {
         .then((result) => {
 
             let templateChannel = document.getElementById('templateChannel');
-
+            let count = 0
             for (const x of result.channels)
             {
                 let channel = templateChannel.cloneNode(true);
@@ -71,6 +71,11 @@ const setUpMainPage = (result) => {
                     }
                    if (x.members.includes(USERID))
                    {
+                    if (count == 0)
+                    {
+                    openChannel(x.id)
+                    count++
+                    }
                     channels.appendChild(channel);
                     channel.addEventListener('click', openChannel)
                    }
@@ -82,8 +87,14 @@ const setUpMainPage = (result) => {
                 
             
             }
+       
+
         
         
+        const profileImage = document.getElementById('profileImage');
+        //profileImage.removeAttribute('id')
+        //profileImage.setAttribute('id', USERID)
+        profileImage.addEventListener('click', renderProfile)
         
         })
 

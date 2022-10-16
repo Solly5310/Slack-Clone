@@ -5,7 +5,6 @@ const BASEURL = `http://localhost:${BACKEND_PORT}`
 
 
 const get = (url, token) => {
-    console.log("we get here")
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json")
     myHeaders.append("Authorization", `Bearer ${token}`);
@@ -27,11 +26,17 @@ const post = (url, payload, TOKEN) => {
 
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", `Bearer ${TOKEN}`);
-
-var requestOptions = {
+var requestOptions = payload ?  
+{
   method: 'POST',
   headers: myHeaders,
   body: payload,
+  redirect: 'follow'
+}
+:
+{
+  method: 'POST',
+  headers: myHeaders,
   redirect: 'follow'
 };
 
@@ -57,7 +62,7 @@ const put = (url, payload, TOKEN) => {
 
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", `Bearer ${TOKEN}`);
-
+    console.log(url, payload, TOKEN)
 var requestOptions = {
   method: 'PUT',
   headers: myHeaders,
@@ -80,4 +85,30 @@ return new Promise ((resolve, reject) => {
   );
 }
 
-export {get, post, put}
+const del= (url, TOKEN) => {
+  var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `Bearer ${TOKEN}`);
+
+var requestOptions = {
+  method: 'DELETE',
+  headers: myHeaders,
+  redirect: 'follow'
+};
+
+return new Promise ((resolve, reject) => {
+
+    fetch(`${BASEURL}${url}`, requestOptions)
+  .then((response) => {
+
+    if (response.status == 400 ) {
+
+        reject(response);
+    }
+    return response.text()})
+  .then(result => resolve(result))
+  .catch(error =>  reject(console.log(error)))}
+  );
+}
+
+export {get, post, put, del}

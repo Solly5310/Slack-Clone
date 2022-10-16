@@ -1,10 +1,10 @@
 {
   "users": {
     "13788": {
-      "email": "solomon.rachamim@gmail.com",
-      "name": "solly",
-      "password": "Rachamim5310!",
-      "bio": null,
+      "email": "s@g.com",
+      "name": "dasf",
+      "password": "s",
+      "bio": "my bio be like",
       "image": null,
       "sessionActive": true
     },
@@ -18,8 +18,8 @@
     },
     "20455": {
       "email": "solly@hotmail.com",
-      "name": "Solman",
-      "password": "Rachamim5310!",
+      "name": "solmanchino",
+      "password": "on",
       "bio": null,
       "image": null,
       "sessionActive": true
@@ -28,6 +28,14 @@
       "email": "sebastian@email.com",
       "name": "Sebastian",
       "password": "chickenonastick",
+      "bio": null,
+      "image": null,
+      "sessionActive": true
+    },
+    "56653": {
+      "email": "here is my bio",
+      "name": "solly",
+      "password": "s",
       "bio": null,
       "image": null,
       "sessionActive": true
@@ -48,9 +56,7 @@
       "private": false,
       "description": "123",
       "createdAt": "2022-10-13T06:54:17.689Z",
-      "members": [
-        13788
-      ],
+      "members": [],
       "messages": []
     },
     "191823": {
@@ -107,7 +113,8 @@
       "description": "",
       "createdAt": "2022-10-12T07:45:34.949Z",
       "members": [
-        13788
+        13788,
+        20455
       ],
       "messages": []
     },
@@ -149,9 +156,31 @@
       "description": "",
       "createdAt": "2022-10-12T07:44:22.557Z",
       "members": [
-        13788
+        13788,
+        56653
       ],
-      "messages": []
+      "messages": [
+        {
+          "id": 55,
+          "message": "how are you",
+          "sender": 56653,
+          "sentAt": "2022-10-16T04:57:04.740Z",
+          "edited": false,
+          "editedAt": null,
+          "pinned": false,
+          "reacts": []
+        },
+        {
+          "id": 54,
+          "message": "hey",
+          "sender": 56653,
+          "sentAt": "2022-10-16T04:57:00.427Z",
+          "edited": false,
+          "editedAt": null,
+          "pinned": false,
+          "reacts": []
+        }
+      ]
     },
     "787530": {
       "name": "test",
@@ -163,45 +192,56 @@
       "messages": []
     },
     "813580": {
-      "name": "and now its this",
+      "name": "test",
       "creator": 15272,
       "private": false,
-      "description": "2219",
+      "description": "123",
       "createdAt": "2021-09-13T08:00:03.220Z",
       "members": [
         15272,
         56422,
-        13788
+        13788,
+        56653
       ],
       "messages": [
         {
-          "id": 45,
-          "message": "test",
+          "id": 53,
+          "message": "juioherasdgasdf",
           "sender": 13788,
-          "sentAt": "2022-10-13T22:21:08.591Z",
+          "sentAt": "2022-10-15T23:45:46.237Z",
           "edited": false,
           "editedAt": null,
           "pinned": false,
           "reacts": []
         },
         {
-          "id": 44,
-          "message": "test",
+          "id": 52,
+          "message": "juioherasdg",
           "sender": 13788,
-          "sentAt": "2022-10-13T22:21:06.913Z",
+          "sentAt": "2022-10-15T23:45:44.381Z",
           "edited": false,
           "editedAt": null,
-          "pinned": false,
+          "pinned": true,
           "reacts": []
         },
         {
-          "id": 43,
-          "message": "test",
+          "id": 50,
+          "message": "asdfasdf",
           "sender": 13788,
-          "sentAt": "2022-10-13T22:21:03.054Z",
-          "edited": false,
-          "editedAt": null,
-          "pinned": false,
+          "sentAt": "2022-10-15T23:43:01.974Z",
+          "edited": true,
+          "editedAt": "2022-10-15T23:45:49.794Z",
+          "pinned": true,
+          "reacts": []
+        },
+        {
+          "id": 49,
+          "message": "awerqwe",
+          "sender": 13788,
+          "sentAt": "2022-10-14T06:22:18.726Z",
+          "edited": true,
+          "editedAt": "2022-10-16T01:08:02.388Z",
+          "pinned": true,
           "reacts": []
         },
         {
@@ -231,7 +271,7 @@
           "sentAt": "2021-09-13T08:00:04.165Z",
           "edited": false,
           "editedAt": null,
-          "pinned": false,
+          "pinned": true,
           "reacts": []
         },
         {
@@ -281,7 +321,7 @@
           "sentAt": "2021-09-13T08:00:04.014Z",
           "edited": false,
           "editedAt": null,
-          "pinned": false,
+          "pinned": true,
           "reacts": []
         },
         {
@@ -381,7 +421,7 @@
           "sentAt": "2021-09-13T08:00:03.797Z",
           "edited": false,
           "editedAt": null,
-          "pinned": false,
+          "pinned": true,
           "reacts": []
         },
         {
@@ -647,5 +687,5 @@
       "messages": []
     }
   },
-  "nextMessageId": 46
+  "nextMessageId": 56
 }
