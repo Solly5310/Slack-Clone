@@ -14,6 +14,7 @@
  * @return {Promise<string>} Promise which resolves to the file as a data url.
  */
 export function fileToDataUrl(file) {
+    console.log(file)
     const validFileTypes = [ 'image/jpeg', 'image/png', 'image/jpg' ]
     const valid = validFileTypes.find(type => type === file.type);
     // Bad data, let's walk away.

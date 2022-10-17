@@ -1,8 +1,119 @@
 import {get, post, put, del} from './services.js'
 import { popUpSetUp, getTime } from './utils.js';
 import {TOKEN, USERID, setUpMainPage} from './main.js'
+import {fileToDataUrl} from './helpers.js'
 
 let CHANNELSELECTED
+
+const inviteUsersToChannel = (e) => {
+    e.preventDefault()
+    console.log("invite users")
+    const [popUpTitle, popUpBody] = popUpSetUp();
+    popUpTitle.insertAdjacentText('afterbegin', "Invite Users")
+    get(`/channel/${CHANNELSELECTED}`, TOKEN)
+        .then((channelResult) => {
+
+            get(`/user`, TOKEN)
+                .then((userResult) => {
+                    const usersInChannel = channelResult.members
+                    const usersInApp = userResult.users.map((user) => user.id)
+                    const usersNotInChannel = usersInApp.filter((user) => !usersInChannel.includes(user))
+                    console.log(usersNotInChannel)
+
+                    const inviteUsersForm = document.createElement('form');
+                    inviteUsersForm.setAttribute('id', 'inviteUsersForm')
+
+                    for (let userId of usersNotInChannel) {
+                        get(`/user/${userId}`, TOKEN)
+                            .then((user) => {
+                                const userName = user.name
+                                const userCheckbox = document.createElement('input');
+                                const userLabel = document.createElement('label');
+                                userCheckbox.setAttribute('type', 'checkbox')
+                                userCheckbox.setAttribute('name', userName)
+                                userCheckbox.setAttribute('value', userId)
+                                userLabel.insertAdjacentText('afterbegin', userName)
+                                userLabel.setAttribute('class', "form-check-label")
+
+                                const seperator = document.createElement('div')
+
+                                seperator.appendChild(userCheckbox)
+                                seperator.appendChild(userLabel)
+                                inviteUsersForm.appendChild(seperator)
+
+                            })
+                    }
+
+                    const submitButton = document.createElement('button');
+                    submitButton.setAttribute('class', 'btn btn-primary')
+                    submitButton.insertAdjacentText('afterbegin', "Submit")
+                    submitButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        //const form = document.getElementById('inviteUsersForm');
+                        const formData = new FormData(inviteUsersForm);
+                        
+                        for (var pair of formData.entries()) {
+                            const payload = {}
+                            payload['userId'] = 1 * pair[1]
+                            console.log(payload)
+                            post(`/channel/${CHANNELSELECTED}/invite`, JSON.stringify(payload), TOKEN)
+                                .then((result) => {
+                                    console.log(result)
+                                })
+                        }
+                        popUp.style.display = "none";
+                        openChannel("updateChannel")
+
+                    })
+                    popUpBody.appendChild(inviteUsersForm)
+                    popUpBody.appendChild(submitButton)
+            })
+        })
+
+}
+
+const uploadImage = (e) => {
+    e.preventDefault()
+    console.log("upload")
+    const [popUpTitle, popUpBody] = popUpSetUp();
+    popUpTitle.insertAdjacentText('afterbegin', "Update Profile Image")
+    const uploadImageTemplate = document.getElementById('uploadImageTemplate');
+    const uploadImage = uploadImageTemplate.cloneNode(true);
+    uploadImage.removeAttribute('id');
+    uploadImage.style.display = "block";
+    popUpBody.appendChild(uploadImage);
+    const fileInput = uploadImage.children[1];
+    fileInput.addEventListener('change', (e) => {
+       const file = e.target.files[0];
+       console.log(file)
+        fileToDataUrl(file)
+            .then((dataUrl) => {
+                const imagePreview = uploadImage.children[2];
+                imagePreview.style.display = "block";
+                imagePreview.setAttribute('src', dataUrl)
+                const submitImageButton = document.createElement('button');
+                submitImageButton.insertAdjacentText('afterbegin', "Submit")
+                submitImageButton.setAttribute('class', 'btn btn-primary')
+                submitImageButton.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    console.log("submit")
+                    console.log(dataUrl)
+                    const payload = JSON.stringify({
+                        image: dataUrl
+                    })
+                    put('/user', payload, TOKEN)
+                        .then((result) => {
+                            popUp.style.display = "none";
+                            setUpMainPage(true);
+                            CHANNELSELECTED ? openChannel('updateChannel') : null
+                        })
+                })
+                uploadImage.appendChild(submitImageButton)
+            })
+
+    })
+}
+
 
 const submitEditProfile = (e) => {
     e.preventDefault();
@@ -125,6 +236,13 @@ const renderProfile = (e)=>{
                 popUpBody.appendChild(editProfileButton);
                 editProfileButton.style.display = "block";
                 editProfileButton.addEventListener('click', editProfile)
+
+                const uploadImageButton = document.createElement('button');
+                uploadImageButton.insertAdjacentText('afterbegin', 'Edit DP')
+                uploadImageButton.setAttribute('class', 'btn btn-primary')
+                popUpBody.appendChild(uploadImageButton);
+                uploadImageButton.style.display = "block";
+                uploadImageButton.addEventListener('click', uploadImage)
             }
         })
 }
@@ -380,6 +498,16 @@ const openChannel = (event) => {
                         leaveChannelButton.setAttribute('id', 'leaveChannelButton')
                         leaveChannel.appendChild(leaveChannelButton);
                         leaveChannelButton.addEventListener('click', removeMemberFromChannel)
+
+                        const inviteUsers = document.createElement('td');
+                        headerRow.appendChild(inviteUsers);
+                        const inviteUsersButtonTemplate = document.getElementById('inviteUsersButtonTemplate');
+                        const inviteUsersButton = inviteUsersButtonTemplate.cloneNode(true);
+                        inviteUsersButton.style.display = "block";
+                        inviteUsersButton.removeAttribute('id');
+                        inviteUsersButton.setAttribute('id', 'inviteUsersButton')
+                        inviteUsers.appendChild(inviteUsersButton);
+                        inviteUsers.addEventListener('click', inviteUsersToChannel)
                         }
 
                         const pinnedMessages = messages.filter((message) => message.pinned)
@@ -426,10 +554,21 @@ const updateChannel = (event) => {
 
 
 const joinChannel = (event) => {
-    event.preventDefault();
+    let channelId
+    if (typeof event == 'number')
+    {
+        console.log("yes")
+        channelId = event
+        CHANNELSELECTED = channelId
+    }
+    else {
+        event.preventDefault()
+        channelId = event.target.id;
+    }
 
-    const channelID = event.target.id;
-    CHANNELSELECTED = channelID
+
+    
+
 
     const [popUpTitle, popUpBody] = popUpSetUp();
     const joinChannelButtonTemplate = document.getElementById('joinChannelButtonTemplate');
@@ -438,7 +577,7 @@ const joinChannel = (event) => {
     joinChannelButton.setAttribute('id', 'joinChannelButton')
     popUpBody.appendChild(joinChannelButton);
     joinChannelButton.addEventListener('click', (event) => {
-        post(`/channel/${channelID}/join`, JSON.stringify({}), TOKEN)
+        post(`/channel/${channelId}/join`, JSON.stringify({}), TOKEN)
         .then((result) => {
             popUp.style.display = "none";
             setUpMainPage(true)

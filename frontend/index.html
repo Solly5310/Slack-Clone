@@ -115,6 +115,7 @@
     </form>
     <button class="btn btn-primary" id="editChannelButtonTemplate">Edit Channel</button>
     <button class="btn btn-primary" id="leaveChannelButtonTemplate">Leave Channel</button>
+    <button class="btn btn-primary" id="inviteUsersButtonTemplate">Invite Users</button>
     <button class="btn btn-primary" id="joinChannelButtonTemplate">Join Channel</button>
     <form id="updateChannelFormTemplate">
       <label for="name">Name</label>
@@ -130,19 +131,19 @@
       <button class="btn btn-primary">delete</button>
     </form>
     <form id="editProfileTemplate">
-      <label for="name">Name</label>
+      <label class="inputLabel" for="name">Name</label>
       <input class="form-control" type="text" name="name" id="nameInput" disabled>
       <input type="checkbox" class="form-check-input" name="nameActivate" id="nameActivate">
       <label for="nameActivate">Edit Name</label>
-      <label for="email">email</label>
+      <label class="inputLabel"  for="email">email</label>
       <input class="form-control" type="text" name="email" id="emailInput" disabled>
       <input type="checkbox" class="form-check-input" name="emailActivate" id="emailActivate">
       <label for="emailActivate">Edit Email</label>
-      <label for="bio">Bio</label>
+      <label class="inputLabel"  for="bio">Bio</label>
       <input class="form-control" type="text" name="bio" id="bio" disabled>
       <input type="checkbox" class="form-check-input" name="bioActivate" id="bioActivate">
       <label for="bioActivate">Edit Bio</label>
-      <label for="password">Password</label>
+      <label class="inputLabel"  for="password">Password</label>
       <input class="form-control" type="password" name="password" id="passwordInput" disabled>
       <input type="checkbox" class="form-check-input" id="passwordCheck">
       <label for="passwordCheck">Show Password</label>
@@ -152,10 +153,15 @@
     </form>
     <ul id="userProfileTemplate">
       <li id="userName">Name: </li>
-      <li id="userEmail">Email: </li>
-      <li id="userBio">Bio: </li>
+x      <li id="userBio">Bio: </li>
       <li id="userImage">Image: </li>
     </ul>
+    <form id="uploadImageTemplate" enctype="multipart/form-data" method="post">
+      <label for="file">Upload a File:</label>
+      <input type="file" name="file" accept="image/*">
+      <img id="dpPreview">
+    </form>
+
   </main>
   <!-- JavaScript Bundle with Popper -->
   <script type="module" src="src/main.js"></script>

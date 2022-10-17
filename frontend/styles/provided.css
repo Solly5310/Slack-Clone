@@ -8,6 +8,10 @@ html, body {
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+.inputLabel {
+    display: block;
+}
+
 main {
     height:100%
 }
@@ -36,6 +40,10 @@ main {
     border-radius:5px;
     width:500px;
     height:500px;
+}
+
+#popUpBody {
+    overflow-y: scroll; 
 }
 
 #mainPage {
@@ -203,3 +211,23 @@ main {
 #editProfileTemplate {
     display: none;
 }
+
+#updateProfileSubmit {
+    margin-left: 10px;
+}
+
+#uploadImageTemplate {
+    display: none;
+}
+
+
+#dpPreview {
+    width: 100px;
+    height: 100px;
+    display: none;
+}
+
+#inviteUsersButtonTemplate {
+    display: none;
+}
+

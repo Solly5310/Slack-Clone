@@ -71,17 +71,22 @@ const setUpMainPage = (result) => {
                     }
                    if (x.members.includes(USERID))
                    {
-                    if (count == 0)
-                    {
-                    openChannel(x.id)
-                    count++
-                    }
+                        if (count == 0)
+                        {
+                        openChannel(x.id)
+                        count++
+                        }
                     channels.appendChild(channel);
                     channel.addEventListener('click', openChannel)
                    }
                    else {
                     channels.appendChild(channel);
                     channel.addEventListener('click', joinChannel)
+                    if (count == 0)
+                    {
+                        joinChannel(x.id)
+                        count++
+                    }
                    }
                 }
                 
@@ -89,12 +94,16 @@ const setUpMainPage = (result) => {
             }
        
 
+        get(`/user/${USERID}`, TOKEN)
+            .then((result) => {
+                const profileImage = document.getElementById('profileImage');
+               
+                result.image? profileImage.setAttribute('src', result.image) : null
+                profileImage.addEventListener('click', renderProfile)
+
+            })
         
         
-        const profileImage = document.getElementById('profileImage');
-        //profileImage.removeAttribute('id')
-        //profileImage.setAttribute('id', USERID)
-        profileImage.addEventListener('click', renderProfile)
         
         })
 

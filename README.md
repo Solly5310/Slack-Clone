@@ -133,9 +133,12 @@ done
 
 ### 2.4. Milestone 4 - Multi-user interactivity (10%)
 
+-- we also need to consider if a user does not have a linked channel
+
+
 Milestone 4 focuses on the interactions that come from having multiple users in the system.
 
-#### 2.4.1 Inviting users to a channel
+#### 2.4.1 Inviting users to a channel 
  * Users should be able to add other users to a channel from a modal. Users are visually identified by their name.
  * Users should be able to select multiple users to add at the same time.
  * When selecting the user(s), they must be displayed in alphabetical order of their name.
@@ -144,14 +147,9 @@ Milestone 4 focuses on the interactions that come from having multiple users in 
  * Within a single channel screen, if you click on a users' name on a given message, it should display their profile screen.
  * Their profile photo, name, bio, and email should be displayed on this screen.
 
-- done
-
 #### 2.4.3 Viewing and editing user's own profile
  * On all logged in screens, there must be a way for the user to view their own profile screen.
- * On a user's own profile screen, they should also be able to see the field that allows them to enter a new password (they cannot see their current).
-
-- we can quickly make this so that it is the users own profile
- 
+ * On a user's own profile screen, they should also be able to see the field that allows them to enter a new password (they cannot see their current). 
  * On a user's own profile screen, they should be able to toggle between viewing the new password they're entering in either plain text or hidden as a string of asterisks/dots of the correct length. It is hidden by default.
  * On a user's own profile screen, they can update their own profile, including name, bio, email, and password (as described above).
  * On a user's own profile screen, they should be able to upload and change their profile photo.
