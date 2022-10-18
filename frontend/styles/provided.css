@@ -231,3 +231,6 @@ main {
     display: none;
 }
 
+.smileEmoji, .loveEmoji, .laughEmoji  {
+    cursor: pointer;
+}

@@ -5,9 +5,51 @@ import {fileToDataUrl} from './helpers.js'
 
 let CHANNELSELECTED
 
+const countReacts = (reacts, emojiType) => {
+    let count = 0;
+    let userAddedEmoji = false
+    for (let react of reacts) {
+        if (react.react === emojiType) {
+            count += 1;
+        }
+        if (react.user === USERID) {
+            userAddedEmoji = true;
+        }
+    }
+    return [count, userAddedEmoji];
+}
+
+const addOrRemoveEmoji = (event) => {
+    event.preventDefault();
+    const addedEmoji = event.target.id
+    console.log(event.target.parentElement.children)
+    const emojiType = event.target.className
+    const messageId = event.target.parentElement.children[0].id
+    console.log(typeof addedEmoji)
+    if (addedEmoji == 'false') {
+        console.log("we get here")
+        post(`/message/react/${CHANNELSELECTED}/${messageId}`, JSON.stringify({react: emojiType}), TOKEN)
+            .then(
+                (result) => {
+                    console.log(result)
+                    openChannel("updateChannel")
+                }
+            )
+    } else {
+        post(`/message/unreact/${CHANNELSELECTED}/${messageId}`, JSON.stringify({react: emojiType}), TOKEN)
+            .then((result) => {
+                console.log(result)
+                openChannel("updateChannel")
+            })
+    }
+    
+}
+
+    
+
 const inviteUsersToChannel = (e) => {
     e.preventDefault()
-    console.log("invite users")
+
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Invite Users")
     get(`/channel/${CHANNELSELECTED}`, TOKEN)
@@ -18,7 +60,7 @@ const inviteUsersToChannel = (e) => {
                     const usersInChannel = channelResult.members
                     const usersInApp = userResult.users.map((user) => user.id)
                     const usersNotInChannel = usersInApp.filter((user) => !usersInChannel.includes(user))
-                    console.log(usersNotInChannel)
+                   
 
                     const inviteUsersForm = document.createElement('form');
                     inviteUsersForm.setAttribute('id', 'inviteUsersForm')
@@ -55,10 +97,10 @@ const inviteUsersToChannel = (e) => {
                         for (var pair of formData.entries()) {
                             const payload = {}
                             payload['userId'] = 1 * pair[1]
-                            console.log(payload)
+                           
                             post(`/channel/${CHANNELSELECTED}/invite`, JSON.stringify(payload), TOKEN)
                                 .then((result) => {
-                                    console.log(result)
+
                                 })
                         }
                         popUp.style.display = "none";
@@ -74,7 +116,7 @@ const inviteUsersToChannel = (e) => {
 
 const uploadImage = (e) => {
     e.preventDefault()
-    console.log("upload")
+
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Update Profile Image")
     const uploadImageTemplate = document.getElementById('uploadImageTemplate');
@@ -85,7 +127,7 @@ const uploadImage = (e) => {
     const fileInput = uploadImage.children[1];
     fileInput.addEventListener('change', (e) => {
        const file = e.target.files[0];
-       console.log(file)
+
         fileToDataUrl(file)
             .then((dataUrl) => {
                 const imagePreview = uploadImage.children[2];
@@ -96,8 +138,7 @@ const uploadImage = (e) => {
                 submitImageButton.setAttribute('class', 'btn btn-primary')
                 submitImageButton.addEventListener('click', (e) => {
                     e.preventDefault()
-                    console.log("submit")
-                    console.log(dataUrl)
+                 
                     const payload = JSON.stringify({
                         image: dataUrl
                     })
@@ -124,10 +165,10 @@ const submitEditProfile = (e) => {
         if (pair[0] == "name" || pair[0] == "email" || pair[0] == 'bio' || pair[0] == "password")
             payload[pair[0]] = pair[1]
     }
-    console.log(payload)
+
     put(`/user`, JSON.stringify(payload), TOKEN)
         .then((result) => {
-            console.log(result)
+
             popUp.style.display = "none";
             openChannel("updateChannel");
         })
@@ -138,7 +179,7 @@ const editProfile = (e) => {
     e.preventDefault()
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Edit Profile")
-    console.log("edit profile")
+
     const editProfileTemplate = document.getElementById('editProfileTemplate');
     const editProfile = editProfileTemplate.cloneNode(true);
     editProfile.removeAttribute('id');
@@ -146,7 +187,7 @@ const editProfile = (e) => {
     
   
     const nameActivateCheckbox = editProfile.children[2]
-    console.log(nameActivateCheckbox)
+   
 
     nameActivateCheckbox.addEventListener('change', (e) => {
         const nameInput = editProfile.children[1]
@@ -169,7 +210,7 @@ const editProfile = (e) => {
 
     const bioActivateCheckbox = editProfile.children[10]
     bioActivateCheckbox.addEventListener('change', (e) => {
-        console.log("checked")
+    
         const bioInput = editProfile.children[9]
         if (e.target.checked) {
             bioInput.disabled = false;
@@ -211,7 +252,7 @@ const renderProfile = (e)=>{
     const userId = e.target.id == "profileImage" ?  USERID: e.target.id
     get(`/user/${userId}`, TOKEN)
         .then((result) => {
-            console.log(result)
+            
             const userProfileTemplate =  document.getElementById('userProfileTemplate')
             const userProfile = userProfileTemplate.cloneNode(true);
 
@@ -227,8 +268,7 @@ const renderProfile = (e)=>{
             userImage.setAttribute('src', result.image)
 
             popUpBody.appendChild(userProfile)
-            console.log(userId)
-            console.log(USERID)
+          
             if (userId == USERID) {
                 const editProfileButton = document.createElement('button');
                 editProfileButton.insertAdjacentText('afterbegin', 'Edit Profile')
@@ -250,6 +290,7 @@ const renderMessages = (messages, table) => {
     for (let x of messages){
         get(`/user/${x.sender}`, TOKEN)
             .then((result) =>   {
+             
                 let tr1 =  document.createElement('tr');
                 let td1 = document.createElement('td');
                 tr1.appendChild(td1);
@@ -287,7 +328,45 @@ const renderMessages = (messages, table) => {
                     pinButton.addEventListener('click', pinMessage)
                     pinButton.setAttribute('class', "btn btn-primary pinButton")
                 }
+
                 tdMessage.appendChild(pinButton);
+                const smileEmoji = document.createElement('span');
+                smileEmoji.setAttribute('class', 'smileEmoji')
+                smileEmoji.insertAdjacentText('afterbegin', '  😀')
+                tdMessage.appendChild(smileEmoji);
+   
+                const [smileReacts, userAddedSmileEmoji] = countReacts(x.reacts, 'smileEmoji')
+                const [loveReacts, userAddedloveEmoji] = countReacts(x.reacts, 'loveEmoji')
+                const [laughReacts, userAddedlaughEmoji] = countReacts(x.reacts, 'laughEmoji')
+
+                if (smileReacts)
+                {
+                    const smile = '😀 '
+                    const text = smile.repeat(smileReacts)
+                    console.log(text)
+                    smileEmoji.setAttribute('title',smile)
+                }
+                else {
+                    smileEmoji.setAttribute('title', 'No smile emojis')
+                }
+                
+                smileEmoji.setAttribute('id', userAddedSmileEmoji)
+
+                console.log(smileEmoji.id)
+                smileEmoji.addEventListener('click', addOrRemoveEmoji)
+                
+                const loveEmoji = document.createElement('span');
+                loveEmoji.insertAdjacentText('afterbegin', '  ❤️')
+                loveEmoji.setAttribute('class', 'loveEmoji')
+                tdMessage.appendChild(loveEmoji);
+
+                const laughEmoji = document.createElement('span');
+                laughEmoji.insertAdjacentText('afterbegin', '  😂')
+                laughEmoji.setAttribute('class', 'laughEmoji')
+                tdMessage.appendChild(laughEmoji);
+
+                //now lets add a event listener on hover
+                // and an event listener on click
 
                 tr2.appendChild(tdMessage);
                 tr2.setAttribute('id', x.id)
@@ -426,7 +505,7 @@ const openChannel = (event) => {
     let channelId
     if (typeof event == 'number')
     {
-        console.log("yes")
+
         channelId = event
     }
     else if (event != "updateChannel") {
@@ -436,7 +515,7 @@ const openChannel = (event) => {
         channelId = CHANNELSELECTED
     }
     CHANNELSELECTED = channelId;
-    console.log(CHANNELSELECTED)
+
     const channelMessages = get(`/message/${channelId}?start=0`, TOKEN)
     channelMessages
         .then((result) => {
@@ -452,10 +531,10 @@ const openChannel = (event) => {
                     const headerRow = document.createElement('tr');
                     headerRow.setAttribute('id', 'headerRow')
                     
-                    console.log(result)
+
                     // here we need to consider if the user is part of the channel
                     //so this is when he is
-                    console.log(USERID)
+
                     if (result.members.includes(USERID)) {
                         const description = document.createElement('td');
                         const channelName = document.createElement('td');
@@ -512,8 +591,7 @@ const openChannel = (event) => {
 
                         const pinnedMessages = messages.filter((message) => message.pinned)
                         const unpinnedMessages = messages.filter((message) => !message.pinned)
-                        console.log(pinnedMessages)
-                        console.log(unpinnedMessages)
+
                         const test = new Promise ((resolve, reject) => {
                             return resolve(renderMessages(pinnedMessages, table))
                         })
@@ -557,7 +635,7 @@ const joinChannel = (event) => {
     let channelId
     if (typeof event == 'number')
     {
-        console.log("yes")
+
         channelId = event
         CHANNELSELECTED = channelId
     }
