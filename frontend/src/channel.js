@@ -4,6 +4,41 @@ import {TOKEN, USERID, setUpMainPage} from './main.js'
 import {fileToDataUrl} from './helpers.js'
 
 let CHANNELSELECTED
+let imagesCarousel = []
+
+const renderImageCarousel = (imagePos) => {
+    let imageRotation = imagePos
+    const [popUpTitle, popUpBody] = popUpSetUp();
+    popUpTitle.insertAdjacentText('afterbegin', "Image")
+    const image = document.createElement('img');
+    image.setAttribute('class', 'messageImageViewed')
+    image.setAttribute('src', imagesCarousel[imageRotation])
+    popUpBody.appendChild(image)
+
+
+    if (imageRotation > 0) {
+        const leftButton = document.createElement('button');
+        leftButton.insertAdjacentText('afterbegin', '⬅')
+        leftButton.setAttribute('class', 'btn btn-primary')
+        popUpBody.appendChild(leftButton);
+        leftButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            image.setAttribute('src', imagesCarousel[--imageRotation])
+            renderImageCarousel(imageRotation)
+        })
+    }
+    if (imageRotation < imagesCarousel.length - 1) {
+        const rightButton = document.createElement('button');
+        rightButton.insertAdjacentText('afterbegin', '➡️')
+        rightButton.setAttribute('class', 'btn btn-primary')
+        popUpBody.appendChild(rightButton);
+        rightButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            image.setAttribute('src', imagesCarousel[++imageRotation])
+            renderImageCarousel(imageRotation)
+        })
+    }
+}
 
 const countReacts = (reacts, emojiType) => {
     let count = 0;
@@ -12,7 +47,7 @@ const countReacts = (reacts, emojiType) => {
         if (react.react === emojiType) {
             count += 1;
         }
-        if (react.user === USERID) {
+        if (react.user === USERID && react.react === emojiType) {
             userAddedEmoji = true;
         }
     }
@@ -22,23 +57,18 @@ const countReacts = (reacts, emojiType) => {
 const addOrRemoveEmoji = (event) => {
     event.preventDefault();
     const addedEmoji = event.target.id
-    console.log(event.target.parentElement.children)
     const emojiType = event.target.className
     const messageId = event.target.parentElement.children[0].id
-    console.log(typeof addedEmoji)
     if (addedEmoji == 'false') {
-        console.log("we get here")
         post(`/message/react/${CHANNELSELECTED}/${messageId}`, JSON.stringify({react: emojiType}), TOKEN)
             .then(
                 (result) => {
-                    console.log(result)
                     openChannel("updateChannel")
                 }
             )
     } else {
         post(`/message/unreact/${CHANNELSELECTED}/${messageId}`, JSON.stringify({react: emojiType}), TOKEN)
             .then((result) => {
-                console.log(result)
                 openChannel("updateChannel")
             })
     }
@@ -116,9 +146,9 @@ const inviteUsersToChannel = (e) => {
 
 const uploadImage = (e) => {
     e.preventDefault()
-
+    const sendingImage = e.target.id == 'sendImage' ? true : false
     const [popUpTitle, popUpBody] = popUpSetUp();
-    popUpTitle.insertAdjacentText('afterbegin', "Update Profile Image")
+    popUpTitle.insertAdjacentText('afterbegin', sendingImage? 'Send Image':"Update Profile Image")
     const uploadImageTemplate = document.getElementById('uploadImageTemplate');
     const uploadImage = uploadImageTemplate.cloneNode(true);
     uploadImage.removeAttribute('id');
@@ -142,12 +172,22 @@ const uploadImage = (e) => {
                     const payload = JSON.stringify({
                         image: dataUrl
                     })
+
+                    if (sendingImage) {
+                        post(`/message/${CHANNELSELECTED}`, payload, TOKEN)
+                            .then((result) => {
+                                popUp.style.display = "none";
+                                openChannel("updateChannel")
+                            })
+                    }
+                    else {
                     put('/user', payload, TOKEN)
                         .then((result) => {
                             popUp.style.display = "none";
                             setUpMainPage(true);
                             CHANNELSELECTED ? openChannel('updateChannel') : null
                         })
+                    }
                 })
                 uploadImage.appendChild(submitImageButton)
             })
@@ -287,6 +327,7 @@ const renderProfile = (e)=>{
         })
 }
 const renderMessages = (messages, table) => {
+    imagesCarousel = []
     for (let x of messages){
         get(`/user/${x.sender}`, TOKEN)
             .then((result) =>   {
@@ -310,8 +351,30 @@ const renderMessages = (messages, table) => {
                 tr2.appendChild(tdDate);
                 tdDate.setAttribute('class', 'dateRow')
                 let tdMessage = document.createElement('td');
-                x.edited ?  tdMessage.insertAdjacentText('afterbegin', `${x.message} (Edited ${getTime(x.editedAt)})`) :  tdMessage.insertAdjacentText('afterbegin', x.message)
-                
+                if (x.message) {
+                 x.edited ?  tdMessage.insertAdjacentText('afterbegin', `${x.message} (Edited ${getTime(x.editedAt)})`) :  tdMessage.insertAdjacentText('afterbegin', x.message)
+                } else {
+                    // We know need to consider the modal view as well
+                    // A user should be able to selec the image thumbnail and view the image in a modal
+                    // In addition the photos are on rotation
+                    let messageImage = document.createElement('img')
+                    imagesCarousel.push(x.image)
+                    messageImage.setAttribute('src', x.image)
+                    messageImage.setAttribute('class', 'messageImage')
+                    tdMessage.appendChild(messageImage)
+
+                    const imagePosition = imagesCarousel.length - 1;
+                    
+                   
+
+                    messageImage.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        renderImageCarousel(imagePosition)
+                      
+                    })
+
+
+                }
                 let pinButton;
                 if (x.pinned) {
                 
@@ -330,31 +393,12 @@ const renderMessages = (messages, table) => {
                 }
 
                 tdMessage.appendChild(pinButton);
+
                 const smileEmoji = document.createElement('span');
                 smileEmoji.setAttribute('class', 'smileEmoji')
                 smileEmoji.insertAdjacentText('afterbegin', '  😀')
                 tdMessage.appendChild(smileEmoji);
    
-                const [smileReacts, userAddedSmileEmoji] = countReacts(x.reacts, 'smileEmoji')
-                const [loveReacts, userAddedloveEmoji] = countReacts(x.reacts, 'loveEmoji')
-                const [laughReacts, userAddedlaughEmoji] = countReacts(x.reacts, 'laughEmoji')
-
-                if (smileReacts)
-                {
-                    const smile = '😀 '
-                    const text = smile.repeat(smileReacts)
-                    console.log(text)
-                    smileEmoji.setAttribute('title',smile)
-                }
-                else {
-                    smileEmoji.setAttribute('title', 'No smile emojis')
-                }
-                
-                smileEmoji.setAttribute('id', userAddedSmileEmoji)
-
-                console.log(smileEmoji.id)
-                smileEmoji.addEventListener('click', addOrRemoveEmoji)
-                
                 const loveEmoji = document.createElement('span');
                 loveEmoji.insertAdjacentText('afterbegin', '  ❤️')
                 loveEmoji.setAttribute('class', 'loveEmoji')
@@ -364,6 +408,51 @@ const renderMessages = (messages, table) => {
                 laughEmoji.insertAdjacentText('afterbegin', '  😂')
                 laughEmoji.setAttribute('class', 'laughEmoji')
                 tdMessage.appendChild(laughEmoji);
+
+                const [smileReacts, userAddedSmileEmoji] = countReacts(x.reacts, 'smileEmoji')
+                const [loveReacts, userAddedloveEmoji] = countReacts(x.reacts, 'loveEmoji')
+                const [laughReacts, userAddedlaughEmoji] = countReacts(x.reacts, 'laughEmoji')
+
+                if (smileReacts)
+                {
+                    const smile = '😀 '
+                    const titleText = smile.repeat(smileReacts)
+                    smileEmoji.setAttribute('title',titleText)
+                }
+                else {
+                    smileEmoji.setAttribute('title', 'No smile emojis')
+                }
+
+                if (loveReacts)
+                {
+                    const love = '😍 '
+                    const titleText = love.repeat(loveReacts)
+                    loveEmoji.setAttribute('title', titleText)
+                }
+                else {
+                    loveEmoji.setAttribute('title', 'No love emojis')
+                }
+
+                if (laughReacts)
+                {
+                    const laugh = '😂 '
+                    const titleText = laugh.repeat(laughReacts)
+                    laughEmoji.setAttribute('title',titleText)
+                }
+                else {
+                    laughEmoji.setAttribute('title', 'No laugh emojis')
+                }
+
+
+                smileEmoji.setAttribute('id', userAddedSmileEmoji)
+                loveEmoji.setAttribute('id', userAddedloveEmoji)
+                laughEmoji.setAttribute('id', userAddedlaughEmoji)
+
+                smileEmoji.addEventListener('click', addOrRemoveEmoji)
+                loveEmoji.addEventListener('click', addOrRemoveEmoji)
+                laughEmoji.addEventListener('click', addOrRemoveEmoji)
+
+              
 
                 //now lets add a event listener on hover
                 // and an event listener on click
@@ -680,6 +769,7 @@ document.getElementById("messageInput").addEventListener("submit", function(even
         })
 })
 
+document.getElementById('sendImage').addEventListener('click', uploadImage)
 
 
 
