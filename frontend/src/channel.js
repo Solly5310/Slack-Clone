@@ -366,6 +366,7 @@ const renderMessages = (messages, table) => {
                 let image = document.createElement('img');
                 image.setAttribute('src', result.image || './src/stock.jpg')
                 image.setAttribute('class', 'profileImageMessenger')
+                image.setAttribute('alt', 'userDisplayImage')
                 td1.appendChild(image)
                 tr1.setAttribute('id', x.sender)
 
@@ -387,8 +388,12 @@ const renderMessages = (messages, table) => {
 
                     editMessageButton.removeAttribute('id');
                     tdMessage.appendChild(editMessageButton);
+                    if(x.image) {
+                        editMessageButton.setAttribute('id', `${x.id} i`)
+                    } else {
+                        editMessageButton.setAttribute('id', x.id)
+                    }
 
-                    editMessageButton.setAttribute('id', x.id)
                     editMessageButton.addEventListener('click', editMessage)
                 
                 }
@@ -501,9 +506,11 @@ const editMessage = (e) => {
     const editMessageFormTemplate = document.getElementById('editMessageFormTemplate');
     const editMessageForm = editMessageFormTemplate.cloneNode(true);
     editMessageForm.removeAttribute('id')
+    const imageCheck = e.target.id.includes('i')
+    console.log(imageCheck)
+    imageCheck ? popUpTitle.insertAdjacentText('afterbegin', "Delete Image") : popUpTitle.insertAdjacentText('afterbegin', "Edit Message") 
+    if (!imageCheck)  {
     popUpBody.appendChild(editMessageForm);
-    popUpTitle.insertAdjacentText('afterbegin', "Edit Message")
-    const deleteButton = editMessageForm.lastElementChild;
     editMessageForm.addEventListener('submit', (event) => {
         event.preventDefault()
         const message = event.target[0].value
@@ -517,6 +524,13 @@ const editMessage = (e) => {
                 openChannel("updateChannel");
             }) 
     })
+    }
+
+    
+      
+    const deleteButton = editMessageForm.lastElementChild;
+    imageCheck ? popUpBody.append(deleteButton) : null
+    
     deleteButton.addEventListener('click', (event) => {
         event.preventDefault()
         const messageId = e.target.id
