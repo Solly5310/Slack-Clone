@@ -1,171 +1,186 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="#">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Slackr</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- You can add your styles and scripts here -->
+    <!-- CSS only -->
+    <link href="https://getbootstrap.com/docs/5.2/assets/css/docs.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
+    <script type="module" src="src/helpers.js"></script>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="shortcut icon" href="#">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Slackr</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- You can add your styles and scripts here -->
-  <!-- CSS only -->
-  <link href="https://getbootstrap.com/docs/5.2/assets/css/docs.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
-  <script type="module" src="src/helpers.js"></script>
-</head>
+  <body>
+    <!-- banner which will switch location to the sidebar upon loggin in -->
+    <header id="banner" class="banner" >
+      <h1>Slackr</h1>
+    </header>
+    <main role="main">
+        <!-- popUp which is my saving grace ;) used for a lot of differnt functionality within the application -->
+      <div id="popUp">
+        <div id="popUpContent">
+          <div id="popUpHeader">
+            <button class="btn btn-primary" id="closePopUp">X</button>
+            <h2 id="popUpTitle"></h2>
 
-<body>
-  <!-- This is an example app structure, you can modify this as much as you choose -->
-
-
-  <header id="banner" class="banner" >
-    <h1>Slackr</h1>
-  </header>
-  <main role="main">
-    
-    <div id="popUp">
-      <div id="popUpContent">
-        <div id="popUpHeader">
-          <button class="btn btn-primary" id="closePopUp">X</button>
-          <h2 id="popUpTitle"></h2>
-
-        </div>
-        <div id="popUpBody">
-        </div>
-      </div>
-    </div>
-
-    <div id="mainPage">
-      
-        <nav id="sideBar" class="navbar navbar-dark bg-danger">
-          <div id = "navContainer" class="container-fluid">
-            
-            <ul id= "channels" class="list-group">
-            </ul>
-            <button class="btn btn-primary" id="createChannel">Create Channel</button>
           </div>
-        </nav>
-        <div id = 'container'>
-          <nav class="navbar navbar-dark bg-dark" id = profileBar>
-              <img id="profileImage" src="./src/stock.jpg" ></img>
-          </nav>
-          <table id="table" class="table table-sm table-dark">
-            <thead id = channelHead></thead>
-            <tbody id="messagesTable">
-
-            </tbody>
-          </table>
-          <form id = "messageInput">
-            <input required type="text" id="message" placeholder="Enter message here">
-            <button id="sendImage" class="btn btn-primary">Image</button>
-            <button type="submit" class="btn btn-primary" id="send">Send</button>
-          </form>
+          <div id="popUpBody">
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div id="login">
-      <h2>Login</h2>
-      <form id="login-form" class="form-group">
-        <label for="login-email">Email</label>
-        <input type="email" id="login-email" class="form-control login-input" name="login-email" placeholder="Email" required>
-        <label for="login-password">Password</label>
-        <input type="password" class="form-control login-input" id="login-password" name="login-password" placeholder="Password" required>
-        <button class="btn btn-primary login-input" type="submit">Login</button>
+      <!-- mainpage which loads upon logging in -->
+      <div id="mainPage">
+          <!-- sidebar which renders upon logging in -->
+          <nav id="sideBar" class="navbar navbar-dark bg-danger">
+            <div id = "navContainer" class="container-fluid">
+              <!-- channel list -->
+              <ul id= "channels" class="list-group"></ul>
+              <button class="btn btn-primary" id="createChannel">Create Channel</button>
+            </div>
+          </nav>
+          <div id = 'container'>
+              <!-- top profile bar -->
+            <nav class="navbar navbar-dark bg-dark" id = profileBar>
+                <img alt="displayImage" id="profileImage" src="./src/stock.jpg" ></img>
+            </nav>
+              <!-- messages that loaded upon opening a channel -->
+            <table id="table">
+              <thead  id = channelHead></thead>
+              <tbody id="messagesTable">
+
+              </tbody>
+            </table>
+            <form id = "messageInput">
+              <!-- message input  -->
+              <input required type="text" id="message" placeholder="Enter message here">
+              <button id="sendImage" class="btn btn-primary">Image</button>
+              <button type="submit" class="btn btn-primary" id="send">Send</button>
+            </form>
+        </div>
+      </div>
+        <!-- login screen -->
+      <div id="login">
+        <h2>Login</h2>
+        <form id="login-form" class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" class="form-control login-input" name="login-email" placeholder="Email" required>
+          <label for="login-password">Password</label>
+          <input type="password" class="form-control login-input" id="login-password" name="login-password" placeholder="Password" required>
+          <button class="btn btn-primary login-input" type="submit">Login</button>
+        </form>
+        <button class="btn btn-primary login-input" id="registerButton">Register</button>
+      </div>
+      <!-- register screen -->
+      <div id="register">
+        <h2>Register</h2>
+        <form id="register-form">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" name="register-email" placeholder="Email" required>
+          <label for="register-name">Name</label>
+          <input type="text" id="register-name" name="register-name" placeholder="Name" required>
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" name="register-password" placeholder="Password" required>
+          <label for="register-reenter-password">Re-Enter Password</label>
+          <input type="password" id="register-reenter-password" name="register-reenter-password" placeholder="Password" required>
+          <button class="btn btn-primary" type="submit">Register</button>
+        </form>
+        <button class="btn btn-primary" id="loginButton">Login</button>
+      </div>
+            <!-- Copyright footers -->
+      <footer id="copyright" class="fixed-bottom">
+        <p>&copy; Slackr</p>
+      </footer>
+
+      <!-- TEMPLATES rendered dynamically in application:-->
+      <li class="list-group-item" id="templateChannel"></li>
+
+      <form id="createChannelFormTemplate">
+        <label class="" for="channel-name">Channel Name</label>
+        <input required class="form-control" type="text" name="channel-name" placeholder="channel" id="channel-name">
+        <label class="" for="channel-description">Description (optional)</label>
+        <input class="form-control" type="text" name="channel-description" id="channel-description">
+        <input required class="form-check-input" type="radio" id="public" name="public/private">
+        <label class="form-check-label" for="private">private</label><br>
+        <input required class="form-check-input" type="radio" id="private" name="public/private">
+        <label class="form-check-label" for="public">public</label><br>
+        <button type="submit" class="btn btn-primary" id="createChannelSubmit">Submit</button>
+        <button type="submit" class="btn btn-primary editMessageButton" id="editMessageButtonTemplate">Edit</button>
       </form>
-      <button class="btn btn-primary login-input" id="registerButton">Register</button>
-    </div>
 
-    <div id="register">
-      <h2>Register</h2>
-      <form id="register-form">
-        <label for="register-email">Email</label>
-        <input type="email" id="register-email" name="register-email" placeholder="Email" required>
-        <label for="register-name">Name</label>
-        <input type="text" id="register-name" name="register-name" placeholder="Name" required>
-        <label for="register-password">Password</label>
-        <input type="password" id="register-password" name="register-password" placeholder="Password" required>
-        <label for="register-reenter-password">Re-Enter Password</label>
-        <input type="password" id="register-reenter-password" name="register-reenter-password" placeholder="Password" required>
-        <button class="btn btn-primary" type="submit">Register</button>
+      <button class="btn btn-primary" id="editChannelButtonTemplate">Edit Channel</button>
+      <button class="btn btn-primary" id="leaveChannelButtonTemplate">Leave Channel</button>
+      <button class="btn btn-primary" id="inviteUsersButtonTemplate">Invite Users</button>
+      <button class="btn btn-primary" id="joinChannelButtonTemplate">Join Channel</button>
+
+      <form id="updateChannelFormTemplate">
+        <label for="name">Name</label>
+        <input class="form-control" type="text" name="name" id="nameInput">
+        <label for="description">Description</label>
+        <input class="form-control" name="description" id="descriptionInput" type="text">
+        <button type="submit" class="btn btn-primary" id="updateChannelSubmit">Submit</button>
       </form>
-      <button class="btn btn-primary" id="loginButton">Login</button>
-    </div>
-    
-    <footer id="copyright" class="fixed-bottom">
-      <p>&copy; Slackr</p>
-    </footer>
 
-    <!-- TEMPLATES:-->
-    <li class="list-group-item" id="templateChannel"></li>
-    <form id="createChannelFormTemplate">
-      <label class="" for="channel-name">Channel Name</label>
-      <input required class="form-control" type="text" name="channel-name" placeholder="channel" id="channel-name">
-      <label class="" for="channel-description">Description (optional)</label>
-      <input class="form-control" type="text" name="channel-description" id="channel-description">
-      
-      <input required class="form-check-input" type="radio" id="public" name="public/private">
-      <label class="form-check-label" for="private">private</label><br>
-      
-     
-      <input required class="form-check-input" type="radio" id="private" name="public/private">
-      <label class="form-check-label" for="public">public</label><br>
-      <button type="submit" class="btn btn-primary" id="createChannelSubmit">Submit</button>
-      <button type="submit" class="btn btn-primary" id="editMessageButtonTemplate">Edit</button>
-    </form>
-    <button class="btn btn-primary" id="editChannelButtonTemplate">Edit Channel</button>
-    <button class="btn btn-primary" id="leaveChannelButtonTemplate">Leave Channel</button>
-    <button class="btn btn-primary" id="inviteUsersButtonTemplate">Invite Users</button>
-    <button class="btn btn-primary" id="joinChannelButtonTemplate">Join Channel</button>
-    <form id="updateChannelFormTemplate">
-      <label for="name">Name</label>
-      <input class="form-control" type="text" name="name" id="nameInput">
-      <label for="description">Description</label>
-      <input class="form-control" name="description" id="descriptionInput" type="text">
-      <button type="submit" class="btn btn-primary" id="updateChannelSubmit">Submit</button>
-    </form>
-    <form id="editMessageFormTemplate">
-      <label for="message">Message</label>
-      <input class="form-control" type="text" name="message" id="messageInput">
-      <button type="submit" class="btn btn-primary" id="updateChannelSubmit">Submit</button>
-      <button class="btn btn-primary">delete</button>
-    </form>
-    <form id="editProfileTemplate">
-      <label class="inputLabel" for="name">Name</label>
-      <input class="form-control" type="text" name="name" id="nameInput" disabled>
-      <input type="checkbox" class="form-check-input" name="nameActivate" id="nameActivate">
-      <label for="nameActivate">Edit Name</label>
-      <label class="inputLabel"  for="email">email</label>
-      <input class="form-control" type="text" name="email" id="emailInput" disabled>
-      <input type="checkbox" class="form-check-input" name="emailActivate" id="emailActivate">
-      <label for="emailActivate">Edit Email</label>
-      <label class="inputLabel"  for="bio">Bio</label>
-      <input class="form-control" type="text" name="bio" id="bio" disabled>
-      <input type="checkbox" class="form-check-input" name="bioActivate" id="bioActivate">
-      <label for="bioActivate">Edit Bio</label>
-      <label class="inputLabel"  for="password">Password</label>
-      <input class="form-control" type="password" name="password" id="passwordInput" disabled>
-      <input type="checkbox" class="form-check-input" id="passwordCheck">
-      <label for="passwordCheck">Show Password</label>
-      <input type="checkbox" class="form-check-input" name="passwordActivate" id="passwordActivate">
-      <label for="passwordActivate">Edit Password</label>
-      <button type="submit" class="btn btn-primary" id="updateProfileSubmit">Submit</button>
-    </form>
-    <ul id="userProfileTemplate">
-      <li id="userName">Name: </li>
-x      <li id="userBio">Bio: </li>
-      <li id="userImage">Image: </li>
-    </ul>
-    <form id="uploadImageTemplate" enctype="multipart/form-data" method="post">
-      <label for="file">Upload a File:</label>
-      <input type="file" name="file" accept="image/*">
-      <img id="dpPreview">
-    </form>
+      <form id="editMessageFormTemplate">
+        <label for="message">Message</label>
+        <input class="form-control" type="text" name="message" id="messageInput">
+        <button type="submit" class="btn btn-primary" id="updateChannelSubmit">Submit</button>
+        <button class="btn btn-primary">delete</button>
+      </form>
 
-  </main>
-  <!-- JavaScript Bundle with Popper -->
-  <script type="module" src="src/main.js"></script>
-</body>
+      <form id="editProfileTemplate">
+        <label class="inputLabel" for="name">Name</label>
+        <input class="form-control" type="text" name="name" id="nameInput" disabled>
+        <input type="checkbox" class="form-check-input" name="nameActivate" id="nameActivate">
+        <label for="nameActivate">Edit Name</label>
+        <label class="inputLabel"  for="email">email</label>
+        <input class="form-control" type="text" name="email" id="emailInput" disabled>
+        <input type="checkbox" class="form-check-input" name="emailActivate" id="emailActivate">
+        <label for="emailActivate">Edit Email</label>
+        <label class="inputLabel"  for="bio">Bio</label>
+        <input class="form-control" type="text" name="bio" id="bio" disabled>
+        <input type="checkbox" class="form-check-input" name="bioActivate" id="bioActivate">
+        <label for="bioActivate">Edit Bio</label>
+        <label class="inputLabel"  for="password">Password</label>
+        <input class="form-control" type="password" name="password" id="passwordInput" disabled>
+        <input type="checkbox" class="form-check-input" id="passwordCheck">
+        <label for="passwordCheck">Show Password</label>
+        <input type="checkbox" class="form-check-input" name="passwordActivate" id="passwordActivate">
+        <label for="passwordActivate">Edit Password</label>
+        <button type="submit" class="btn btn-primary" id="updateProfileSubmit">Submit</button>
+      </form>
+
+      <ul id="userProfileTemplate">
+        <li id="userName">Name: </li>
+        <li id="userEmail">Email: </li>
+        <li id="userBio">Bio: </li>
+        <li>
+          Image:
+          <img alt="displayImage" id="userImage"/>
+        </li>
+      </ul>
+
+      <ul id="channelInfoTemplate">
+        <li id="channeName"> </li>
+        <li id="channelDescription"> </li>
+        <li id="creationDate"> </li>
+        <li id="creator"> </li>
+      </ul>
+      
+      <form id="uploadImageTemplate" enctype="multipart/form-data" method="post">
+        <label for="file">Upload a File:</label>
+        <input type="file" name="file" accept="image/*">
+        <img alt="displayImagePreview" id="dpPreview">
+      </form>
+
+    </main>
+    <!-- JavaScript Bundle with Popper -->
+    <script type="module" src="src/main.js"></script>
+  </body>
 
 </html>

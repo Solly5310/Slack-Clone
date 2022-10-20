@@ -36,22 +36,10 @@ The requirements describe a series of **screens**. Screens can be popups/modals,
 
 ## Next Steps
 1. fix bugs
-	- In particular, the profile image one
-	- and get the css right for the messenger table
-	- We should Test Error pop ups as well
-	- Another bug is the pin messages part, but Im not sure how to fix that one yet
-	- the default behaviour bug where it needs to revert to a page, what if you have not joined a channel yet?
-	- check all emojis are utf-8
+	- Another bug is the pin messages part, but Im not sure how to fix that one yet - promises
 2. Implement any last features
-	- Make private and public groups more distiguishable
-	- need to see profile photos in the messages table
-	- we need to put a create timestamp for the channel creation date
 	- pagination or infinite scroll?
-	- We need to be able to delete images as well
-	- Alt text for images - colours that arent accesible?
-	- we need to make invite users alphabetical
-3. Make it mobile friendly
-	- Your application is usable for desktop sizes generally, tablet sizes generally, and mobile sizes generally (down to 400px wide, 700px high).
+	- colours that arent accesible?
 4. Fix up css styling and make it look good - remember that if it is functional and ui is ok, this will only be max 5%
 5. fix up code so that it look sordered, lint?
 

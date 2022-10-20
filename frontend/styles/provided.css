@@ -18,7 +18,27 @@ main {
 #register {
     display:none
 }
-
+thead {
+    height:5%
+}
+#messagesTable {
+    height:90%
+}
+td {
+    width:50%
+}
+.btn {
+    min-width: 60px;
+    margin: 0;
+}
+#table 
+{
+    display:flex;
+    flex-direction: column;
+    height: 90%;
+    padding:0px;
+    margin:0
+}
 #popUp{
     display:none;
     position:fixed;
@@ -40,7 +60,12 @@ main {
     border-radius:5px;
     width:500px;
     height:500px;
+    overflow-y: scroll;
 }
+
+
+
+
 
 #popUpBody {
     overflow-y: scroll; 
@@ -63,7 +88,7 @@ main {
     width:20%;
     height:100%;
     padding: 0;
-    max-width: 332px;
+    max-width: 240px;
 }
 
 #copyright {
@@ -102,6 +127,7 @@ main {
 
 #headerRow {
     position: absolute;
+    width: 100%;
 }
 
 #editChannelButtonTemplate {
@@ -125,9 +151,6 @@ main {
     display: none;
 }
 
-.dateRow{
-    width:20%
-}
 
 #container {
     display: none;
@@ -142,13 +165,7 @@ main {
     width: 100%;
 }
 
-#table 
-{
-    display:flex;
-    height: 90%;
-    padding:0px;
-    margin:0
-}
+
 
 #message {
     height:100%;
@@ -162,9 +179,6 @@ main {
     display:none
 }
 
-.pinButton {
-    margin-left: 5px;
-}
 
 .userName:hover {
     cursor: pointer;
@@ -176,21 +190,28 @@ main {
 
 }
 
-.userProfile {
+.userProfile, #channelInfo {
     list-style: none;
 }
 
 #profileBar {
     display:flex;
-    height: 5%;
+    height: 7%;
     width: 100%;
     flex-direction: row-reverse;
     padding: 0;
 
 }
+.profileImageMessenger {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+}
 
 #profileImage {
-    width: 5%;
+    width: 80px;
     height: 100%;
     display: flex;
 }
@@ -251,7 +272,37 @@ main {
     height: 70px;
 }
 
-.messageImageViewed {
+.messageImageViewed, #userImage {
     max-width: 200px;
     max-height: 200px;
+}
+
+#channelInfoTemplate {
+    display: none;
+}
+
+.editMessageButton {
+    margin-right: 5px;
+}
+#channels {
+    padding-top: 60px;
+}
+@media screen and (max-width: 600px) {
+    #popUpContent{
+        width: 300px;
+    }
+    thead {
+        height: 10%
+    }
+    
+    #profileBar {
+        height: 7%
+    }
+    #sideBar {
+        min-width: 40%
+    }
+    
+}
+.list-group-item {
+    min-width: 140px;
 }

@@ -4,6 +4,9 @@ import { BACKEND_PORT } from './config.js';
 const BASEURL = `http://localhost:${BACKEND_PORT}`
 
 
+// all requests can be changed based on url, allowing ease of access
+
+// get request to backend
 const get = (url, token) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json")
@@ -20,6 +23,8 @@ const get = (url, token) => {
         .then(response => resolve(response.json())) 
     })
 }
+
+// post request to backend
 const post = (url, payload, TOKEN) => {
     var myHeaders = new Headers();
 
@@ -55,7 +60,7 @@ return new Promise ((resolve, reject) => {
   );
 }
 
-
+// put request to backend
 const put = (url, payload, TOKEN) => {
     var myHeaders = new Headers();
 
@@ -85,6 +90,7 @@ return new Promise ((resolve, reject) => {
   );
 }
 
+// delete request to backend
 const del= (url, TOKEN) => {
   var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");

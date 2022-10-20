@@ -1,11 +1,33 @@
 import {get, post, put, del} from './services.js'
-import { popUpSetUp, getTime } from './utils.js';
+import { popUpSetUp, getTime, compareNames } from './utils.js';
 import {TOKEN, USERID, setUpMainPage} from './main.js'
 import {fileToDataUrl} from './helpers.js'
 
 let CHANNELSELECTED
 let imagesCarousel = []
+let usersNotInChannelDefined = []
 
+//Checks for users not in a channel
+const getUsersNotInChannel = () => {
+    get(`/channel/${CHANNELSELECTED}`, TOKEN)
+    .then((channelResult) => {
+        get(`/user`, TOKEN)
+            .then((userResult) => {
+            const usersInChannel = channelResult.members
+            const usersInApp = userResult.users.map((user) => user.id)
+            let usersNotInChannel = usersInApp.filter((user) => !usersInChannel.includes(user))
+        for (let userId of usersNotInChannel) {
+            get(`/user/${userId}`, TOKEN)
+                .then((user) => {
+                    usersNotInChannelDefined.push({userName: user.name, user: userId})
+                })
+         }
+        })
+    })
+}
+
+
+// This enables the ability to rotate between images
 const renderImageCarousel = (imagePos) => {
     let imageRotation = imagePos
     const [popUpTitle, popUpBody] = popUpSetUp();
@@ -13,8 +35,8 @@ const renderImageCarousel = (imagePos) => {
     const image = document.createElement('img');
     image.setAttribute('class', 'messageImageViewed')
     image.setAttribute('src', imagesCarousel[imageRotation])
+    image.setAttribute('alt', 'imageFromUser')
     popUpBody.appendChild(image)
-
 
     if (imageRotation > 0) {
         const leftButton = document.createElement('button');
@@ -40,6 +62,7 @@ const renderImageCarousel = (imagePos) => {
     }
 }
 
+//This will count how many reacts are for each particular emoji for each particular message
 const countReacts = (reacts, emojiType) => {
     let count = 0;
     let userAddedEmoji = false
@@ -54,6 +77,7 @@ const countReacts = (reacts, emojiType) => {
     return [count, userAddedEmoji];
 }
 
+//Ability to add or remove an emoji
 const addOrRemoveEmoji = (event) => {
     event.preventDefault();
     const addedEmoji = event.target.id
@@ -76,74 +100,70 @@ const addOrRemoveEmoji = (event) => {
 }
 
     
-
+//Invite users to a specific channel
 const inviteUsersToChannel = (e) => {
-    e.preventDefault()
-
+    e.preventDefault()   
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Invite Users")
-    get(`/channel/${CHANNELSELECTED}`, TOKEN)
-        .then((channelResult) => {
 
-            get(`/user`, TOKEN)
-                .then((userResult) => {
-                    const usersInChannel = channelResult.members
-                    const usersInApp = userResult.users.map((user) => user.id)
-                    const usersNotInChannel = usersInApp.filter((user) => !usersInChannel.includes(user))
-                   
+    //This is a global variable that needs to be sorted, before we bring up the invite users to channel pop-up
+    usersNotInChannelDefined = usersNotInChannelDefined.sort(compareNames)
+    const inviteUsersForm = document.createElement('form');
+    inviteUsersForm.setAttribute('id', 'inviteUsersForm')
 
-                    const inviteUsersForm = document.createElement('form');
-                    inviteUsersForm.setAttribute('id', 'inviteUsersForm')
+    //sorting each user by their name and then adding them to the form
+    for (let x of usersNotInChannelDefined) {
+        const userCheckbox = document.createElement('input');
+        const userLabel = document.createElement('label');
+        userCheckbox.setAttribute('type', 'checkbox')
+        userCheckbox.setAttribute('name', x.userName)
+        userCheckbox.setAttribute('value', x.user)
+        userLabel.insertAdjacentText('afterbegin', x.userName)
+        userLabel.setAttribute('class', "form-check-label")
+        const seperator = document.createElement('div')
+        seperator.appendChild(userCheckbox)
+        seperator.appendChild(userLabel)
+        inviteUsersForm.appendChild(seperator)
+    }
 
-                    for (let userId of usersNotInChannel) {
-                        get(`/user/${userId}`, TOKEN)
-                            .then((user) => {
-                                const userName = user.name
-                                const userCheckbox = document.createElement('input');
-                                const userLabel = document.createElement('label');
-                                userCheckbox.setAttribute('type', 'checkbox')
-                                userCheckbox.setAttribute('name', userName)
-                                userCheckbox.setAttribute('value', userId)
-                                userLabel.insertAdjacentText('afterbegin', userName)
-                                userLabel.setAttribute('class', "form-check-label")
-
-                                const seperator = document.createElement('div')
-
-                                seperator.appendChild(userCheckbox)
-                                seperator.appendChild(userLabel)
-                                inviteUsersForm.appendChild(seperator)
-
-                            })
-                    }
-
-                    const submitButton = document.createElement('button');
-                    submitButton.setAttribute('class', 'btn btn-primary')
-                    submitButton.insertAdjacentText('afterbegin', "Submit")
-                    submitButton.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        //const form = document.getElementById('inviteUsersForm');
-                        const formData = new FormData(inviteUsersForm);
-                        
-                        for (var pair of formData.entries()) {
-                            const payload = {}
-                            payload['userId'] = 1 * pair[1]
-                           
-                            post(`/channel/${CHANNELSELECTED}/invite`, JSON.stringify(payload), TOKEN)
-                                .then((result) => {
-
-                                })
-                        }
-                        popUp.style.display = "none";
-                        openChannel("updateChannel")
-
-                    })
-                    popUpBody.appendChild(inviteUsersForm)
-                    popUpBody.appendChild(submitButton)
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('class', 'btn btn-primary');
+    submitButton.insertAdjacentText('afterbegin', "Submit");
+    submitButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        //submission of invitations to selected users
+        const formData = new FormData(inviteUsersForm);
+        console.log(inviteUsersForm)
+        
+        let objectiveCount = 0
+        for (var pair of formData.entries()){
+            objectiveCount += 1
+        }
+        let count = 0
+        console.log(objectiveCount)
+        for (var pair of formData.entries()) {
+            const payload = {}
+            payload['userId'] = 1 * pair[1]
+            console.log(payload)
+            post(`/channel/${CHANNELSELECTED}/invite`, JSON.stringify(payload), TOKEN)
+            .then((result) => {
+                count++
+                // only once the last call has been made, do we update the channel
+                if (count === objectiveCount) {
+                    openChannel("updateChannel")
+                }
             })
-        })
+        
+        }
 
+        popUp.style.display = "none";
+
+    })
+    popUpBody.appendChild(inviteUsersForm)
+    popUpBody.appendChild(submitButton)
 }
 
+//This will allow the user to add a a image for their profile photo
 const uploadImage = (e) => {
     e.preventDefault()
     const sendingImage = e.target.id == 'sendImage' ? true : false
@@ -157,7 +177,6 @@ const uploadImage = (e) => {
     const fileInput = uploadImage.children[1];
     fileInput.addEventListener('change', (e) => {
        const file = e.target.files[0];
-
         fileToDataUrl(file)
             .then((dataUrl) => {
                 const imagePreview = uploadImage.children[2];
@@ -195,12 +214,13 @@ const uploadImage = (e) => {
     })
 }
 
-
+//Function that runs to contact backend and update a profile
 const submitEditProfile = (e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     const payload = {}
+
     for (var pair of formData.entries()) {
         if (pair[0] == "name" || pair[0] == "email" || pair[0] == 'bio' || pair[0] == "password")
             payload[pair[0]] = pair[1]
@@ -215,6 +235,7 @@ const submitEditProfile = (e) => {
 
 }
 
+
 const editProfile = (e) => {
     e.preventDefault()
     const [popUpTitle, popUpBody] = popUpSetUp();
@@ -224,11 +245,7 @@ const editProfile = (e) => {
     const editProfile = editProfileTemplate.cloneNode(true);
     editProfile.removeAttribute('id');
     editProfile.style.display = "block";
-    
-  
     const nameActivateCheckbox = editProfile.children[2]
-   
-
     nameActivateCheckbox.addEventListener('change', (e) => {
         const nameInput = editProfile.children[1]
         if (e.target.checked) {
@@ -284,6 +301,7 @@ const editProfile = (e) => {
 
 }
 
+//Obtains user profile information and displays it
 const renderProfile = (e)=>{
     e.preventDefault()
 
@@ -292,7 +310,7 @@ const renderProfile = (e)=>{
     const userId = e.target.id == "profileImage" ?  USERID: e.target.id
     get(`/user/${userId}`, TOKEN)
         .then((result) => {
-            
+
             const userProfileTemplate =  document.getElementById('userProfileTemplate')
             const userProfile = userProfileTemplate.cloneNode(true);
 
@@ -304,8 +322,12 @@ const renderProfile = (e)=>{
             userEmail.insertAdjacentText('beforeend', result.email)
             const userBio = userEmail.nextElementSibling;
             userBio.insertAdjacentText('beforeend', result.bio? result.bio : "No Bio")
-            const userImage = userBio.nextElementSibling;
-            userImage.setAttribute('src', result.image)
+
+            const usersection = userBio.nextElementSibling;
+            const userImage = usersection.firstElementChild;
+
+  
+            userImage.setAttribute('src', result.image || './src/stock.jpg')
 
             popUpBody.appendChild(userProfile)
           
@@ -326,6 +348,8 @@ const renderProfile = (e)=>{
             }
         })
 }
+
+//Renders messages for the specific channel
 const renderMessages = (messages, table) => {
     imagesCarousel = []
     for (let x of messages){
@@ -334,16 +358,21 @@ const renderMessages = (messages, table) => {
              
                 let tr1 =  document.createElement('tr');
                 let td1 = document.createElement('td');
+                let td2 = document.createElement('td');
                 tr1.appendChild(td1);
+                tr1.appendChild(td2);
                 
                 let tr2 =  document.createElement('tr');
-
+                let image = document.createElement('img');
+                image.setAttribute('src', result.image || './src/stock.jpg')
+                image.setAttribute('class', 'profileImageMessenger')
+                td1.appendChild(image)
                 tr1.setAttribute('id', x.sender)
-                
-                td1.insertAdjacentText('afterbegin', result.name);
-                td1.setAttribute('id', x.sender)
-                td1.setAttribute('class', 'userName')
-                td1.addEventListener('click', renderProfile)
+
+                td2.insertAdjacentText('afterbegin', result.name);
+                td2.setAttribute('id', x.sender)
+                td2.setAttribute('class', 'userName')
+                td2.addEventListener('click', renderProfile)
                 
                 
                 let tdDate = document.createElement('td');
@@ -351,31 +380,20 @@ const renderMessages = (messages, table) => {
                 tr2.appendChild(tdDate);
                 tdDate.setAttribute('class', 'dateRow')
                 let tdMessage = document.createElement('td');
-                if (x.message) {
-                 x.edited ?  tdMessage.insertAdjacentText('afterbegin', `${x.message} (Edited ${getTime(x.editedAt)})`) :  tdMessage.insertAdjacentText('afterbegin', x.message)
-                } else {
-                    // We know need to consider the modal view as well
-                    // A user should be able to selec the image thumbnail and view the image in a modal
-                    // In addition the photos are on rotation
-                    let messageImage = document.createElement('img')
-                    imagesCarousel.push(x.image)
-                    messageImage.setAttribute('src', x.image)
-                    messageImage.setAttribute('class', 'messageImage')
-                    tdMessage.appendChild(messageImage)
+                //if the message is sent by the user logged in, they can edit the messages
+                if (x.sender == USERID) {
+                    const editMessageButtonTemplate = document.getElementById('editMessageButtonTemplate');
+                    const editMessageButton = editMessageButtonTemplate.cloneNode(true);
 
-                    const imagePosition = imagesCarousel.length - 1;
-                    
-                   
+                    editMessageButton.removeAttribute('id');
+                    tdMessage.appendChild(editMessageButton);
 
-                    messageImage.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        renderImageCarousel(imagePosition)
-                      
-                    })
-
-
+                    editMessageButton.setAttribute('id', x.id)
+                    editMessageButton.addEventListener('click', editMessage)
+                
                 }
                 let pinButton;
+                //Adding the ability to pin messages
                 if (x.pinned) {
                 
                     pinButton = document.createElement('button');
@@ -393,7 +411,7 @@ const renderMessages = (messages, table) => {
                 }
 
                 tdMessage.appendChild(pinButton);
-
+                // emoji setting up
                 const smileEmoji = document.createElement('span');
                 smileEmoji.setAttribute('class', 'smileEmoji')
                 smileEmoji.insertAdjacentText('afterbegin', '  😀')
@@ -412,7 +430,7 @@ const renderMessages = (messages, table) => {
                 const [smileReacts, userAddedSmileEmoji] = countReacts(x.reacts, 'smileEmoji')
                 const [loveReacts, userAddedloveEmoji] = countReacts(x.reacts, 'loveEmoji')
                 const [laughReacts, userAddedlaughEmoji] = countReacts(x.reacts, 'laughEmoji')
-
+                // depending on the number of reacts, the title of the emoji has that number of emojis added
                 if (smileReacts)
                 {
                     const smile = '😀 '
@@ -443,50 +461,40 @@ const renderMessages = (messages, table) => {
                     laughEmoji.setAttribute('title', 'No laugh emojis')
                 }
 
-
                 smileEmoji.setAttribute('id', userAddedSmileEmoji)
                 loveEmoji.setAttribute('id', userAddedloveEmoji)
                 laughEmoji.setAttribute('id', userAddedlaughEmoji)
-
                 smileEmoji.addEventListener('click', addOrRemoveEmoji)
                 loveEmoji.addEventListener('click', addOrRemoveEmoji)
                 laughEmoji.addEventListener('click', addOrRemoveEmoji)
-
-              
-
-                //now lets add a event listener on hover
-                // and an event listener on click
-
+                if (x.message) {
+                 x.edited ?  tdMessage.insertAdjacentText('beforeend', `${x.message} (Edited ${getTime(x.editedAt)})`) :  tdMessage.insertAdjacentText('beforeend', x.message)
+                } else {
+                    // We know need to consider the modal view as well
+                    // A user should be able to selec the image thumbnail and view the image in a modal
+                    // In addition the photos are on rotation
+                    let messageImage = document.createElement('img')
+                    imagesCarousel.push(x.image)
+                    messageImage.setAttribute('src', x.image)
+                    messageImage.setAttribute('class', 'messageImage')
+                    messageImage.setAttribute('alt', "image from user")
+                    tdMessage.appendChild(messageImage)
+                    const imagePosition = imagesCarousel.length - 1;
+                    messageImage.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        renderImageCarousel(imagePosition)
+                      
+                    })
+                }
                 tr2.appendChild(tdMessage);
-                tr2.setAttribute('id', x.id)
-                if (x.sender == USERID) {
-                    const tdEditMessage = document.createElement('td');
-                    const editMessageButtonTemplate = document.getElementById('editMessageButtonTemplate');
-                    const editMessageButton = editMessageButtonTemplate.cloneNode(true);
-                    editMessageButton.style.display = "block";
-                    editMessageButton.removeAttribute('id');
-                    tdEditMessage.appendChild(editMessageButton);
-                    tr1.appendChild(tdEditMessage);
-                    td1.setAttribute('colspan', 1)
-                    editMessageButton.setAttribute('id', x.id)
-                    editMessageButton.addEventListener('click', editMessage)
-                }
-                else {
-                    td1.setAttribute('colspan', 2)
-                }
+                tr2.setAttribute('id', x.id)      
                 table.appendChild(tr1);
                 table.appendChild(tr2);
-            
-            
-            
-            
-            
-            
             } )
     }
 }
 
-
+// function to edit a message
 const editMessage = (e) => {
     e.preventDefault()
     const [popUpTitle, popUpBody] = popUpSetUp();
@@ -495,7 +503,6 @@ const editMessage = (e) => {
     editMessageForm.removeAttribute('id')
     popUpBody.appendChild(editMessageForm);
     popUpTitle.insertAdjacentText('afterbegin', "Edit Message")
-
     const deleteButton = editMessageForm.lastElementChild;
     editMessageForm.addEventListener('submit', (event) => {
         event.preventDefault()
@@ -510,7 +517,6 @@ const editMessage = (e) => {
                 openChannel("updateChannel");
             }) 
     })
-
     deleteButton.addEventListener('click', (event) => {
         event.preventDefault()
         const messageId = e.target.id
@@ -521,44 +527,37 @@ const editMessage = (e) => {
             }
         )
     })
-
-    
 }
 
+//Used to create channels that appear on sidebar
 const createChannel = (event) => {
     event.preventDefault();
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Create Channel")
-
     const channelFormTemplate = document.getElementById('createChannelFormTemplate');
     const channelForm = channelFormTemplate.cloneNode(true);
     channelForm.removeAttribute('id')
     popUpBody.appendChild(channelForm);
-
     channelForm.addEventListener('submit', (event) => {
         event.preventDefault()
         const channelName = event.target[0].value
         const channelDescription = event.target[1].value
         const channelState = event.target[2].checked
-
-
         const payload = JSON.stringify({
             name: channelName,
             private: channelState,
             description: channelDescription || "N/A"
         })
-       
         const response = post('/channel', payload, TOKEN)
         response
             .then((result) => {
                 popUp.style.display = "none";
                 setUpMainPage(true)
             })
-    
     })
-
 }
 
+// function used to make a member leave a channel
 const removeMemberFromChannel = (event) => {
     post(`/channel/${CHANNELSELECTED}/leave`, JSON.stringify({}), TOKEN)
         .then((result) => {
@@ -570,6 +569,7 @@ const removeMemberFromChannel = (event) => {
 
 }
 
+// pin message function
 const pinMessage =(e) => {
     e.preventDefault()
     const messageId = e.target.id
@@ -580,6 +580,7 @@ const pinMessage =(e) => {
     )
 }
 
+//unpine Message function
 const unpinMessage =(e) => {
     e.preventDefault()
     const messageId = e.target.id
@@ -590,11 +591,16 @@ const unpinMessage =(e) => {
     )
 }
 
-const openChannel = (event) => {
-    let channelId
-    if (typeof event == 'number')
-    {
 
+
+
+
+
+//Functiont that is used to open a channel when logged in, or when you open a different channel etc
+const openChannel = (event) => {
+    //Used to validate if this is as a result of user interaction, on when the user logs in initially
+    let channelId
+    if (typeof event == 'number') {
         channelId = event
     }
     else if (event != "updateChannel") {
@@ -604,7 +610,9 @@ const openChannel = (event) => {
         channelId = CHANNELSELECTED
     }
     CHANNELSELECTED = channelId;
-
+    //We need to run this before the invite users component
+    usersNotInChannelDefined = []
+    getUsersNotInChannel()
     const channelMessages = get(`/message/${channelId}?start=0`, TOKEN)
     channelMessages
         .then((result) => {
@@ -613,51 +621,53 @@ const openChannel = (event) => {
             const channelHead = document.getElementById('channelHead');
             channelHead.textContent = '';
             const messages = result.messages
-
             get(`/channel/${channelId}`, TOKEN)
                 .then((result) => {
-
                     const headerRow = document.createElement('tr');
                     headerRow.setAttribute('id', 'headerRow')
-                    
-
                     // here we need to consider if the user is part of the channel
-                    //so this is when he is
-
+                    // If they are then they get access to the channel details
                     if (result.members.includes(USERID)) {
-                        const description = document.createElement('td');
-                        const channelName = document.createElement('td');
-                        const state = document.createElement('td');
-                        const creationDate = document.createElement('td');
-                        const creator = document.createElement('td');
-
+                        const description = document.createElement('th');
                         channelHead.appendChild(headerRow);
-
-                        channelName.insertAdjacentText('afterbegin', result.name);
-                        state.insertAdjacentText('afterbegin', result.private? "Private" : "Public");
-                        creationDate.insertAdjacentText('afterbegin', result.createdAt);
-                        creator.insertAdjacentText('afterbegin', result.creator);
-                        description.insertAdjacentText('afterbegin', result.description);
-
-                        headerRow.appendChild(channelName);
-                        headerRow.appendChild(state);
-                        headerRow.appendChild(creationDate);
-                        headerRow.appendChild(creator);
+                        const channelInfoButton = document.createElement('button');
+                        channelInfoButton.setAttribute('id', 'channelInfoButton')
+                        channelInfoButton.setAttribute('class', 'btn btn-primary')
+                        channelInfoButton.textContent = "Channel Info"
+                        channelInfoButton.addEventListener('click', ()=> {
+                            const [popUpTitle, popUpBody] = popUpSetUp();
+                            popUpTitle.insertAdjacentText('afterbegin', "Channel Info")
+                            const channelInfoTemplate = document.getElementById('channelInfoTemplate');
+                            const channelInfo = channelInfoTemplate.cloneNode(true);
+                            channelInfo.removeAttribute('id')
+                            channelInfo.setAttribute('id', 'channelInfo')
+                            channelInfo.style.display = "block"
+                            popUpBody.appendChild(channelInfo);
+                            channelInfo.firstElementChild.textContent = `Channel Name: ${result.name}`;
+                            channelInfo.children[0].textContent = `Description: ${result.description}`;
+                            channelInfo.children[1].textContent = result.private ? 'Channel Status: 🔒 private' : '🔓 public';
+                            channelInfo.children[2].textContent = `Creaation Date ${getTime(result.createdAt)}`;
+                            get(`/user/${result.creator}`, TOKEN)
+                                .then(
+                                    (result) => {
+                                        channelInfo.children[3].textContent = `Creator: ${result.name}`
+                                    }
+                                )
+                        })
+                        description.appendChild(channelInfoButton);
                         headerRow.appendChild(description);
-
-
-                        const editChannel = document.createElement('td');
+                        const editChannel = document.createElement('th');
                         const editChannelButtonTemplate  = document.getElementById('editChannelButtonTemplate');
                         const editChannelButton = editChannelButtonTemplate.cloneNode(true);
                         headerRow.appendChild(editChannel);
                         editChannelButton.style.display = "block";
                         editChannelButton.addEventListener('click', updateChannel )
-            
+
                         editChannelButton.removeAttribute('id');
                         editChannelButton.setAttribute('id','editChannelButton')
                         editChannel.appendChild(editChannelButton);
                         
-                        const leaveChannel = document.createElement('td');
+                        const leaveChannel = document.createElement('th');
                         headerRow.appendChild(leaveChannel);
                         const leaveChannelButtonTemplate = document.getElementById('leaveChannelButtonTemplate');
                         const leaveChannelButton = leaveChannelButtonTemplate.cloneNode(true);
@@ -667,7 +677,7 @@ const openChannel = (event) => {
                         leaveChannel.appendChild(leaveChannelButton);
                         leaveChannelButton.addEventListener('click', removeMemberFromChannel)
 
-                        const inviteUsers = document.createElement('td');
+                        const inviteUsers = document.createElement('th');
                         headerRow.appendChild(inviteUsers);
                         const inviteUsersButtonTemplate = document.getElementById('inviteUsersButtonTemplate');
                         const inviteUsersButton = inviteUsersButtonTemplate.cloneNode(true);
@@ -680,7 +690,7 @@ const openChannel = (event) => {
 
                         const pinnedMessages = messages.filter((message) => message.pinned)
                         const unpinnedMessages = messages.filter((message) => !message.pinned)
-
+                        //messages are rendered here, we first apply to pinned messages
                         const test = new Promise ((resolve, reject) => {
                             return resolve(renderMessages(pinnedMessages, table))
                         })
@@ -692,10 +702,11 @@ const openChannel = (event) => {
                         container.style.display = "flex"
             })
         })
+        
 }
 
 const updateChannel = (event) => {
-    
+    //Here we update a channel with new name and description information
     const [popUpTitle, popUpBody] = popUpSetUp();
     popUpTitle.insertAdjacentText('afterbegin', "Edit Channel")
     const channelFormTemplate = document.getElementById('updateChannelFormTemplate');
@@ -719,7 +730,7 @@ const updateChannel = (event) => {
     })
 }
 
-
+//Function used for the user to join a channel
 const joinChannel = (event) => {
     let channelId
     if (typeof event == 'number')
@@ -732,11 +743,6 @@ const joinChannel = (event) => {
         event.preventDefault()
         channelId = event.target.id;
     }
-
-
-    
-
-
     const [popUpTitle, popUpBody] = popUpSetUp();
     const joinChannelButtonTemplate = document.getElementById('joinChannelButtonTemplate');
     const joinChannelButton = joinChannelButtonTemplate.cloneNode(true);
@@ -753,6 +759,7 @@ const joinChannel = (event) => {
     })
 }
 
+//Event listener for the user to send a message, verifiying if it is not empty space
 document.getElementById("messageInput").addEventListener("submit", function(event) {
     event.preventDefault()
     const message = event.target[0].value
@@ -769,8 +776,7 @@ document.getElementById("messageInput").addEventListener("submit", function(even
         })
 })
 
+//Additional upload image functionality
 document.getElementById('sendImage').addEventListener('click', uploadImage)
-
-
 
 export {createChannel, openChannel, updateChannel,renderProfile, joinChannel, removeMemberFromChannel}
