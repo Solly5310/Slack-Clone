@@ -738,11 +738,21 @@ const openChannel = (event) => {
                         inviteUsers.appendChild(inviteUsersButton);
                         inviteUsers.addEventListener('click', inviteUsersToChannel)
                         }
-                        prevButton ? headerRow.appendChild(prevButtonHeader) : null
+                        
+                        const pinnedMessages = messages.filter((message) => message.pinned)
+                        const unpinnedMessages = messages.filter((message) => !message.pinned)
+                        //messages are rendered here, we first apply to pinned messages
+                        //The problem with this is that, the for loop continues and will resolve before all of the messages are there
+                        const test = new Promise ((resolve, reject) => {
+                            return resolve(renderMessages(pinnedMessages, table))
+                        })
+                        test.then((result) => {renderMessages(unpinnedMessages, table)})
+                        
                         let forwardButton 
                         get(`/message/${channelId}?start=${pageIterator + 1}`, TOKEN)
                             .then((messagesResult) => {
                                 console.log(messagesResult.messages.length)
+                                prevButton ? table.appendChild(prevButtonHeader) : null
                                 if(messagesResult.messages.length > 0) {
                                     const forwardButtonHeader = document.createElement("th")
                                     forwardButton = document.createElement("button")
@@ -753,19 +763,11 @@ const openChannel = (event) => {
                                         e.preventDefault()
                                         openChannel("pageIterateForward")
                                     })
+                                    
                                     forwardButtonHeader.appendChild(forwardButton)
-                                    headerRow.appendChild(forwardButtonHeader)
+                                    table.appendChild(forwardButtonHeader)
                             }}
                         )
-                        const pinnedMessages = messages.filter((message) => message.pinned)
-                        const unpinnedMessages = messages.filter((message) => !message.pinned)
-                        //messages are rendered here, we first apply to pinned messages
-                        //The problem with this is that, the for loop continues and will resolve before all of the messages are there
-                        const test = new Promise ((resolve, reject) => {
-                            return resolve(renderMessages(pinnedMessages, table))
-                        })
-                        test.then((result) => {renderMessages(unpinnedMessages, table)})
-
                         
                         table.style.display ="block"
                         const container = document.getElementById('container');

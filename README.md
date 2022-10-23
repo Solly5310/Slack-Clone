@@ -34,14 +34,6 @@ Instead of providing visuals of what the frontend (your task) should look like, 
 The requirements describe a series of **screens**. Screens can be popups/modals, or entire pages. The use of that language is so that you can choose how you want it to be displayed. A screen is essentially a certain state of your web-based application.
 
 
-## Next Steps
-1. fix bugs
-	- Another bug is the pin messages part, but Im not sure how to fix that one yet - promises
-2. Implement any last features
-	- pagination or infinite scroll?
-
-
-
 ### 2.1. Milestone 1 - Registration & Login (15%)
 
 This focuses on the basic user interface to register and log in to the site.
@@ -99,15 +91,11 @@ Milestone 3 focuses on the display and interaction of messages on a single chann
  * Each message should display the sender's name and profile photo, and message timestamp (as a time/date not as an ISO string, flexible to whatever you think is user-friendly). -- profile photo?
  * If the user has no profile photo, the frontend should use a default image.
 
--- need to consider profile photos
--- also need to set default behaviour
-
  
 #### 2.3.2 Message pagination
  * Users can page between sets of messages in the channel.
  * Note: you can ignore this if you properly implement infinite scroll in milestone 6.
 
- -- will look at this at a later time
 
 #### 2.3.3 Sending messages
  * Users can send new messages from the single channel screen.
