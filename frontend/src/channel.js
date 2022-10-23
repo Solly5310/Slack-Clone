@@ -6,7 +6,7 @@ import {fileToDataUrl} from './helpers.js'
 let CHANNELSELECTED
 let imagesCarousel = []
 let usersNotInChannelDefined = []
-
+let pageIterator = 0
 //Checks for users not in a channel
 const getUsersNotInChannel = () => {
     get(`/channel/${CHANNELSELECTED}`, TOKEN)
@@ -617,20 +617,53 @@ const unpinMessage =(e) => {
 const openChannel = (event) => {
     //Used to validate if this is as a result of user interaction, on when the user logs in initially
     let channelId
+    //This is for automatic channel opening when user logs in
     if (typeof event == 'number') {
+        pageIterator = 0
         channelId = event
     }
-    else if (event != "updateChannel") {
-        channelId = event.target.id
+    //this is for pagination
+    else if (event == "pageIterateForward") {
+        channelId = CHANNELSELECTED
+        pageIterator += 1
     }
-    else {
+    //this is for pagination
+    else if (event == "pageIterateBack") {
+        channelId = CHANNELSELECTED
+        pageIterator -= 1
+    }
+    //this is for editing and any adjustements from the user
+    else if (event == "updateChannel") {
         channelId = CHANNELSELECTED
     }
+    //this is when a users selects a new channel to open
+    else {
+        pageIterator = 0
+        channelId = event.target.id
+    }
+    console.log(pageIterator)
     CHANNELSELECTED = channelId;
     //We need to run this before the invite users component
     usersNotInChannelDefined = []
     getUsersNotInChannel()
-    const channelMessages = get(`/message/${channelId}?start=0`, TOKEN)
+    const channelMessages = get(`/message/${channelId}?start=${pageIterator}`, TOKEN)
+    let prevButton
+    const prevButtonHeader = document.createElement('th')
+    if (pageIterator >0){
+        
+        prevButton = document.createElement("button")
+        prevButtonHeader.appendChild(prevButton)
+        prevButton.setAttribute('id', 'prevButton')
+        prevButton.setAttribute('class', 'btn btn-primary')
+        prevButton.textContent = "Previous Messages"
+        prevButton.addEventListener('click', (e) => {
+            e.preventDefault()
+            openChannel("pageIterateBack")
+        })
+
+    }
+    
+
     channelMessages
         .then((result) => {
             const table = document.getElementById('messagesTable');
@@ -640,6 +673,7 @@ const openChannel = (event) => {
             const messages = result.messages
             get(`/channel/${channelId}`, TOKEN)
                 .then((result) => {
+                    console.log(result)
                     const headerRow = document.createElement('tr');
                     headerRow.setAttribute('id', 'headerRow')
                     // here we need to consider if the user is part of the channel
@@ -704,7 +738,25 @@ const openChannel = (event) => {
                         inviteUsers.appendChild(inviteUsersButton);
                         inviteUsers.addEventListener('click', inviteUsersToChannel)
                         }
-
+                        prevButton ? headerRow.appendChild(prevButtonHeader) : null
+                        let forwardButton 
+                        get(`/message/${channelId}?start=${pageIterator + 1}`, TOKEN)
+                            .then((messagesResult) => {
+                                console.log(messagesResult.messages.length)
+                                if(messagesResult.messages.length > 0) {
+                                    const forwardButtonHeader = document.createElement("th")
+                                    forwardButton = document.createElement("button")
+                                    forwardButton.setAttribute('id', 'forwardButton')
+                                    forwardButton.textContent = "Next Messages"
+                                    forwardButton.setAttribute('class', 'btn btn-primary')
+                                    forwardButton.addEventListener('click', (e) => {
+                                        e.preventDefault()
+                                        openChannel("pageIterateForward")
+                                    })
+                                    forwardButtonHeader.appendChild(forwardButton)
+                                    headerRow.appendChild(forwardButtonHeader)
+                            }}
+                        )
                         const pinnedMessages = messages.filter((message) => message.pinned)
                         const unpinnedMessages = messages.filter((message) => !message.pinned)
                         //messages are rendered here, we first apply to pinned messages
@@ -772,6 +824,7 @@ const joinChannel = (event) => {
         .then((result) => {
             popUp.style.display = "none";
             setUpMainPage(true)
+            pageIterator = 0
             openChannel('updateChannel')
         })
     })
