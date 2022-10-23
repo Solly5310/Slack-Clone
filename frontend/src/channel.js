@@ -353,16 +353,19 @@ const renderProfile = (e)=>{
 const renderMessages = (messages, table) => {
     imagesCarousel = []
     for (let x of messages){
+        let tr1 =  document.createElement('tr');
+        let td1 = document.createElement('td');
+        let td2 = document.createElement('td');
+        let tr2 =  document.createElement('tr');
+        tr1.appendChild(td1);
+        tr1.appendChild(td2);
+        table.appendChild(tr1);
+        table.appendChild(tr2);
+        
         get(`/user/${x.sender}`, TOKEN)
             .then((result) =>   {
              
-                let tr1 =  document.createElement('tr');
-                let td1 = document.createElement('td');
-                let td2 = document.createElement('td');
-                tr1.appendChild(td1);
-                tr1.appendChild(td2);
-                
-                let tr2 =  document.createElement('tr');
+               
                 let image = document.createElement('img');
                 image.setAttribute('src', result.image || './src/stock.jpg')
                 image.setAttribute('class', 'profileImageMessenger')
@@ -493,8 +496,8 @@ const renderMessages = (messages, table) => {
                 }
                 tr2.appendChild(tdMessage);
                 tr2.setAttribute('id', x.id)      
-                table.appendChild(tr1);
-                table.appendChild(tr2);
+                
+                loveEmoji.addEventListener('click', () => {console.log("click")})
             } )
     }
 }
@@ -705,6 +708,7 @@ const openChannel = (event) => {
                         const pinnedMessages = messages.filter((message) => message.pinned)
                         const unpinnedMessages = messages.filter((message) => !message.pinned)
                         //messages are rendered here, we first apply to pinned messages
+                        //The problem with this is that, the for loop continues and will resolve before all of the messages are there
                         const test = new Promise ((resolve, reject) => {
                             return resolve(renderMessages(pinnedMessages, table))
                         })

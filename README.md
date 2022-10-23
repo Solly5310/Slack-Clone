@@ -39,9 +39,7 @@ The requirements describe a series of **screens**. Screens can be popups/modals,
 	- Another bug is the pin messages part, but Im not sure how to fix that one yet - promises
 2. Implement any last features
 	- pagination or infinite scroll?
-	- colours that arent accesible?
-4. Fix up css styling and make it look good - remember that if it is functional and ui is ok, this will only be max 5%
-5. fix up code so that it look sordered, lint?
+
 
 
 ### 2.1. Milestone 1 - Registration & Login (15%)
