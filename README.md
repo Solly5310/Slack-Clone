@@ -122,9 +122,6 @@ Milestone 3 focuses on the display and interaction of messages on a single chann
 
 ### 2.4. Milestone 4 - Multi-user interactivity (10%)
 
--- we also need to consider if a user does not have a linked channel
-
-
 Milestone 4 focuses on the interactions that come from having multiple users in the system.
 
 #### 2.4.1 Inviting users to a channel 
